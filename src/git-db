@@ -69,7 +69,7 @@ function main() {
     esac;
 
     # Get current working directory
-    local modulesdir="$(dirname "$(echo "$0" | sed -e 's,\\,/,g')")/python";
+    local modulesdir="$(dirname "$(echo "$0" | sed -e 's,\\,/,g')")/git-db-bin/python";
 
     # Check whether module file exists
     if [ ! -e "$modulesdir/git_db_$module.py" ]; then
