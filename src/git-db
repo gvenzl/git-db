@@ -1,0 +1,83 @@
+#!/usr/bin/env bash
+#
+# Since: May, 2018
+# Author: gvenzl
+# Name: git-db
+# Description: Initiate Git DB
+#
+# Copyright 2018 Gerald Venzl
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+#
+
+VERSION="v0.1.0"
+
+function usage() {
+
+    echo "usage: git db [--version] [--help] <command> [<args>]";
+    echo "";
+    echo "These are common Git DB commands used in various situations:";
+    echo "";
+    echo "start a working area";
+    echo "   init       Create an empty Git DB repository or reinitialize an existing one";
+    echo "";
+    echo "work on the current change";
+    echo "   add        Add a DDL change to the index";
+    echo "   reset      Reset current HEAD to the specified state";
+    echo "   squash     Squash changes on a given object into a single file";
+    echo "";
+    echo "examine the history and state";
+    echo "   log        Show commit logs";
+    echo "   show       Show various types of objects";
+    echo "   status     Show the working tree status";
+    echo "";
+    echo "grow, mark and tweak your common history";
+    echo "   commit     Record changes to the repository";
+    echo "   tag        Tag a commit";
+}
+
+function version() {
+    echo "Git DB git plugin $VERSION";
+    echo "";
+}
+
+function main() {
+    if [ "$#" -lt 1 ]; then
+        version; usage; exit 1;
+    fi
+
+    local module="$1";
+    shift;
+
+    case ${module} in
+        "-h"|"--help")
+            version; usage; exit 0;
+            ;;
+        "-v"|"--version")
+            version; exit 0;
+            ;;
+    esac;
+
+    # Get current working directory
+    local modulesdir="$(dirname "$(echo "$0" | sed -e 's,\\,/,g')")/python";
+
+    # Check whether module file exists
+    if [ ! -e "$modulesdir/git_db_$module.py" ]; then
+        usage; exit 1;
+    fi
+
+    # Execute module "$@"
+    "${modulesdir}/git_db_${module}.py" "$@";
+}
+
+main "$@";

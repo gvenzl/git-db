@@ -4,7 +4,7 @@ Git DB is a Git plugin for tracking database schema changes.
 It tracks DDL changes performed in a database schema or the entire database.
 Git DB uses system triggers to keep track of DDL changes happening.
 
-Following databases are currently supported: Oracle
+Following databases are currently supported: `Oracle`
 
 ## Usage
 
