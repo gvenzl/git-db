@@ -38,13 +38,11 @@ CREATE OR REPLACE TRIGGER GITDB_TRACK_CHANGES
                        CHANGE,
                        OBJECT_NAME,
                        OBJECT_TYPE,
-                       OBJECT_OWNER,
-                       UNDO_CHANGE)
+                       OBJECT_OWNER)
                VALUES (SYSDATE,
                        USER,
                        TO_CLOB(v_stmt),
                        ora_dict_obj_name,
                        ora_dict_obj_type,
-                       ora_dict_obj_owner,
-                       empty_clob());
+                       ora_dict_obj_owner);
     END;
