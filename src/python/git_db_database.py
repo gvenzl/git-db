@@ -90,3 +90,24 @@ def get_sql(content):
             statements_list.pop(i)
 
     return statements_list
+
+
+def get_status(conn):
+    # Output Handler for CLOBs
+    def output_type_handler(cursor, name, defaultType, size, precision, scale):
+        if defaultType == db.CLOB:
+            return cursor.var(db.LONG_STRING, arraysize=cursor.arraysize)
+
+    conn.outputtypehandler = output_type_handler
+    cur = conn.cursor()
+    cur.execute("""SELECT TAG, TO_CHAR(CHANGE_TMS,'YYYY-MM-DD HH24:MI:SS') AS CHANGE_TMS,
+                          CHANGE_USER, OBJECT_NAME, OBJECT_TYPE, CHANGE
+                       FROM GITDB_CHANGES
+                           WHERE COMMIT_ID IS NULL
+                               ORDER BY CHANGE_TMS""")
+    col_names = []
+    result = cur.fetchall()
+    for col_name in cur.description:
+        col_names.append(col_name[0])
+    cur.close()
+    return col_names, result
