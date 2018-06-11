@@ -21,6 +21,7 @@
 #
 
 import cx_Oracle as db
+import os
 
 
 def connect(dbtype, user, password, host, port, db_name):
@@ -64,13 +65,13 @@ def setup_oracle(conn):
 
 
 def get_table_oracle():
-    with open("../sql/oracle/setup_table.sql", "r") as f:
+    with open(os.path.dirname(os.path.realpath(__file__)) + "/../sql/oracle/setup_table.sql", "r") as f:
         return get_sql(f.read())
 
 
 def get_trigger_oracle():
     # TODO: Pass on -all flag and create database wide trigger
-    with open("../sql/oracle/setup_trigger.sql", "r") as f:
+    with open(os.path.dirname(os.path.realpath(__file__)) + "/../sql/oracle/setup_trigger.sql", "r") as f:
         return get_sql(f.read())
 
 
