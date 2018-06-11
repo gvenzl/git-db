@@ -24,12 +24,14 @@ CREATE OR REPLACE TRIGGER GITDB_TRACK_CHANGES
     DECLARE
        v_sql_text  ora_name_list_t;
        v_nPos      PLS_INTEGER;
-       v_stmt      VARCHAR2(4000);
+       v_stmt_part CLOB;
+       v_stmt      CLOB;
     BEGIN
         v_nPos := ora_sql_txt(v_sql_text);
 
         FOR i IN 1..v_nPos LOOP
-            v_stmt := v_stmt || v_sql_text(i);
+            v_stmt_part := TRIM(v_sql_text(i));
+            v_stmt := v_stmt || v_stmt_part;
         END LOOP;
 
         INSERT INTO GITDB_CHANGES
@@ -41,7 +43,7 @@ CREATE OR REPLACE TRIGGER GITDB_TRACK_CHANGES
                        OBJECT_OWNER)
                VALUES (SYSDATE,
                        USER,
-                       TO_CLOB(v_stmt),
+                       v_stmt,
                        ora_dict_obj_name,
                        ora_dict_obj_type,
                        ora_dict_obj_owner);
