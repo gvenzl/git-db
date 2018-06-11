@@ -103,6 +103,11 @@ case "$1" in
             install -v -m 0755 "$GITDB_DIR/src/sql/$DB_TYPE/$sql_file" "$INSTALL_PREFIX/$GITDB_BIN/sql/$DB_TYPE"
         done
 
+        echo ""
+        echo "Git DB Installation complete!"
+        echo "Congratulations, Git DB is now ready for use."
+        echo "Don't forget to make sure that Git DB is in your \$PATH environment variable."
+        echo "Get started with 'git db help'"
         exit
         ;;
 esac
