@@ -44,7 +44,7 @@ def store_credentials(user, password, host, port, dbname):
 
 def get_credentials():
     if not os.path.exists(CONFIG_DIR):
-        raise FileNotFoundError("Configuration directory does not exist. Has it been yet initialized?")
+        raise FileNotFoundError("Configuration directory does not exist. Has the repository been initialized yet?")
     with open(CONFIG_DIR + "/git-db.conf", "r") as f:
         credentials = json.load(f)[CREDENTIALS]
     credentials["password"] = base64.b64decode(credentials["password"].encode("utf-8")).decode("utf-8")
