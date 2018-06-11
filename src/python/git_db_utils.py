@@ -38,7 +38,7 @@ def pretty_print_result(col_names, result):
         for idx, column in enumerate(row):
             if column is not None:
                 widths[idx]["length"] = max(len(column), widths[idx]["length"])
-                row_vals.append(column.replace("\x00", ";"))
+                row_vals.append(column.lstrip("\n").replace("\x00", ";"))
             else:
                 row_vals.append(" ")
         row_values.append(row_vals)
