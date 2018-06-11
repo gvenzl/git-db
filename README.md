@@ -29,6 +29,27 @@ Following databases are currently supported: `Oracle`
        commit     Record changes to the repository
        tag        Tag a commit  
 
+### git db init
+`git db init` enables a given database schema, or the entire database via the `--all` flag, for DDL change tracking.
+It initializes an empty `git` repository in the current working directory where `git db init` has been called.
+The database credentials passed on to `git db init` are stored in the `.git/git-db` folder within the current working directory.
+Subsequent `git db` commands will acquire the credentials from the `.git/git-db` folder and do not require credentials to be passed on anymore.
+
+    usage: git db init [-h] --user USER --password PASSWORD --host HOST --port
+                       PORT --dbname DBNAME [--all]
+    
+    Initialize git repo and database tracking
+    
+    optional arguments:
+      -h, --help           show this help message and exit
+      --user USER          The database schema to track
+      --password PASSWORD  The database schema password
+      --host HOST          The host name on which the database is running on
+      --port PORT          The port on which the database is listening
+      --dbname DBNAME      The name of the database
+      --all                Track all database changes. If set, the database user
+                           must have rights to create a database wide trigger.
+
 # License
     Copyright 2018 Gerald Venzl
  
