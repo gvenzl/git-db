@@ -48,7 +48,6 @@ function usage() {
 
 function version() {
     echo "Git DB git plugin $VERSION";
-    echo "";
 }
 
 function main() {
