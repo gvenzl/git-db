@@ -30,7 +30,7 @@ try:
     conn = db.connect("oracle", c["user"], c["password"], c["host"], c["port"], c["dbname"])
     desc, result = db.get_status(conn)
     conn.close()
-    print("Uncommited database changes:")
+    print("Uncommitted database changes:")
     print("")
     utils.pretty_print_result(desc, result)
 except FileNotFoundError as err:
