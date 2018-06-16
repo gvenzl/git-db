@@ -33,14 +33,14 @@ def connect(dbtype, user, password, host, port, db_name):
         except db.DatabaseError as err:
             raise ConnectionError(err)
     else:
-        raise NotImplementedError("Database type '" + type + "' is not supported by Git DB.")
+        raise NotImplementedError("Database type '" + dbtype + "' is not supported by Git DB.")
 
 
 def setup(dbtype, conn, all_schemas):
     if dbtype == "oracle":
         setup_oracle(conn, all_schemas)
     else:
-        raise NotImplementedError("Database type '" + type + "' is not supported by Git DB.")
+        raise NotImplementedError("Database type '" + dbtype + "' is not supported by Git DB.")
 
 
 def setup_oracle(conn, all_schemas):
