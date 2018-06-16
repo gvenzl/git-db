@@ -24,12 +24,16 @@ import cx_Oracle as db
 import os
 
 
-def connect(dbtype, user, password, host, port, db_name):
+def connect(dbtype, user, password, host, port, db_name, role):
     """ Connects to the database"""
 
     if dbtype == "oracle":
         try:
-            return db.connect(user, password, host + ":" + port + "/" + db_name)
+            return db.connect(user,
+                              password,
+                              host + ":" + port + "/" + db_name,
+                              0 if role is None else eval("db." + role)
+                              )
         except db.DatabaseError as err:
             raise ConnectionError(err)
     else:

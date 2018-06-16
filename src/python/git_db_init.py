@@ -37,16 +37,21 @@ parser.add_argument("--port", required=True,
                     help="The port on which the database is listening")
 parser.add_argument("--dbname", required=True,
                     help="The name of the database")
+parser.add_argument("--role", help="The database user role (SYSDBA, SYSOPER, ...)")
 parser.add_argument("--all", action="store_true",
                     help="Track all database changes. If set, the database user must have rights "
                          "to create a database wide trigger.")
 args = parser.parse_args()
+if args.user.upper() == "SYS" and not args.all:
+    parser.error("SYS user requires --all parameter.")
 
 # Test connection
 try:
-    conn = db.connect("oracle", args.user, args.password, args.host, args.port, args.dbname)
+    conn = db.connect("oracle", args.user, args.password, args.host, args.port, args.dbname, args.role)
 except ConnectionError as err:
-    print("git-db error: Database connection error: {0}".format(err))
+    print("git-db error while connecting to the database:")
+    for msg in err.args:
+        print(msg)
     exit(1)
 
 # Initialize database (schema)
