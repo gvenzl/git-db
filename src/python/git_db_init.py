@@ -51,9 +51,11 @@ except ConnectionError as err:
 
 # Initialize database (schema)
 try:
-    db.setup("oracle", conn)
+    db.setup("oracle", conn, args.all)
 except Exception as err:
-    print("git-db error while setting up database objects: {0}".format(err))
+    print("git-db error while setting up database objects:")
+    for msg in err.args:
+        print(msg)
     exit(1)
 finally:
     conn.close()

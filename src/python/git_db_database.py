@@ -36,14 +36,14 @@ def connect(dbtype, user, password, host, port, db_name):
         raise NotImplementedError("Database type '" + type + "' is not supported by Git DB.")
 
 
-def setup(dbtype, conn):
+def setup(dbtype, conn, all_schemas):
     if dbtype == "oracle":
-        setup_oracle(conn)
+        setup_oracle(conn, all_schemas)
     else:
         raise NotImplementedError("Database type '" + type + "' is not supported by Git DB.")
 
 
-def setup_oracle(conn):
+def setup_oracle(conn, all_schemas):
     stmts_table = get_table_oracle()
     stmts_trigger = get_trigger_oracle()
     try:
@@ -52,12 +52,15 @@ def setup_oracle(conn):
             try:
                 cur.execute(stmt)
             except db.DatabaseError as e:
-                error, = e.args
                 # Ignore already existing table
-                if error.code != 955:
-                    raise e
-        for stmt in stmts_trigger:
-            cur.execute(stmt)
+                if e.args[0].code != 955:
+                    raise db.DatabaseError("Error creating tracking table!", e)
+        try:
+            target = "DATABASE" if all_schemas else "SCHEMA"
+            for stmt in stmts_trigger:
+                cur.execute(stmt.replace("###TARGET###", target))
+        except db.DatabaseError as e:
+            raise db.DatabaseError("Error creating system trigger!", e)
     except db.DatabaseError as e:
         raise e
     finally:
@@ -70,7 +73,6 @@ def get_table_oracle():
 
 
 def get_trigger_oracle():
-    # TODO: Pass on -all flag and create database wide trigger
     with open(os.path.dirname(os.path.realpath(__file__)) + "/../sql/oracle/setup_trigger.sql", "r") as f:
         return get_sql(f.read())
 

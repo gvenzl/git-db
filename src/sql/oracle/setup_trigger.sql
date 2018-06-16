@@ -20,7 +20,7 @@
 --
 
 CREATE OR REPLACE TRIGGER GITDB_TRACK_CHANGES
-    BEFORE DDL ON SCHEMA
+    BEFORE DDL ON ###TARGET###
     DECLARE
        v_sql_text  ora_name_list_t;
        v_nPos      PLS_INTEGER;
