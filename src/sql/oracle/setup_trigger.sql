@@ -19,7 +19,7 @@
 -- limitations under the License.
 --
 
-CREATE OR REPLACE TRIGGER GITDB_TRACK_CHANGES
+CREATE OR REPLACE TRIGGER GITDB_CHANGE_TRACKER
     BEFORE DDL ON ###TARGET###
     DECLARE
        v_sql_text  ora_name_list_t;
