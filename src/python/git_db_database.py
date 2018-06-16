@@ -44,8 +44,8 @@ def setup(dbtype, conn, all_schemas):
 
 
 def setup_oracle(conn, all_schemas):
-    stmts_table = get_table_oracle()
-    stmts_trigger = get_trigger_oracle()
+    stmts_table = get_setup_table_oracle()
+    stmts_trigger = get_setup_trigger_oracle()
     try:
         cur = conn.cursor()
         for stmt in stmts_table:
@@ -60,20 +60,57 @@ def setup_oracle(conn, all_schemas):
             for stmt in stmts_trigger:
                 cur.execute(stmt.replace("###TARGET###", target))
         except db.DatabaseError as e:
-            raise db.DatabaseError("Error creating system trigger!", e)
+            raise db.DatabaseError("Error creating tracking trigger!", e)
+    except db.DatabaseError as e:
+        remove_oracle(conn)
+        raise e
+    finally:
+        cur.close()
+
+
+def remove_oracle(conn):
+    stmts_trigger = get_remove_trigger_oracle()
+    stmts_table = get_remove_table_oracle()
+    try:
+        cur = conn.cursor()
+        for stmt in stmts_trigger:
+            try:
+                cur.execute(stmt)
+            except db.DatabaseError as e:
+                # Ignore ORA-04080: trigger 'XYZ' does not exist
+                if e.args[0].code != 4080:
+                    raise db.DatabaseError("Error removing tracking trigger!", e)
+        try:
+            for stmt in stmts_table:
+                cur.execute(stmt)
+        except db.DatabaseError as e:
+            # Ignore ORA-00942: table or view does not exist
+            if e.args[0].code != 942:
+                raise db.DatabaseError("Error removing tracking table!", e)
     except db.DatabaseError as e:
         raise e
     finally:
         cur.close()
 
 
-def get_table_oracle():
-    with open(os.path.dirname(os.path.realpath(__file__)) + "/../sql/oracle/setup_table.sql", "r") as f:
-        return get_sql(f.read())
+def get_setup_table_oracle():
+    return get_file_content("/../sql/oracle/setup_table.sql")
 
 
-def get_trigger_oracle():
-    with open(os.path.dirname(os.path.realpath(__file__)) + "/../sql/oracle/setup_trigger.sql", "r") as f:
+def get_remove_table_oracle():
+    return get_file_content("/../sql/oracle/remove_table.sql")
+
+
+def get_setup_trigger_oracle():
+    return get_file_content("/../sql/oracle/setup_trigger.sql")
+
+
+def get_remove_trigger_oracle():
+    return get_file_content("/../sql/oracle/remove_trigger.sql")
+
+
+def get_file_content(path):
+    with open(os.path.dirname(os.path.realpath(__file__)) + path, "r") as f:
         return get_sql(f.read())
 
 
