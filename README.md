@@ -36,7 +36,7 @@ The database credentials passed on to `git db init` are stored in the `.git/git-
 Subsequent `git db` commands will acquire the credentials from the `.git/git-db` folder and do not require credentials to be passed on anymore.
 
     usage: git db init [-h] --user USER --password PASSWORD --host HOST --port
-                       PORT --dbname DBNAME [--all]
+                       PORT --dbname DBNAME [--role ROLE] [--all]
     
     Initialize git repo and database tracking
     
@@ -47,6 +47,7 @@ Subsequent `git db` commands will acquire the credentials from the `.git/git-db`
       --host HOST          The host name on which the database is running on
       --port PORT          The port on which the database is listening
       --dbname DBNAME      The name of the database
+      --role ROLE          The database user role (SYSDBA, SYSOPER, ...)
       --all                Track all database changes. If set, the database user
                            must have rights to create a database wide trigger.
 
