@@ -34,8 +34,8 @@ try:
     print("")
     utils.pretty_print_result(desc, result)
 except FileNotFoundError as err:
-    print("git-db error: Error retrieving credentials: {0}".format(err))
+    utils.print_error("git-db error while retrieving credentials:", err)
     exit(1)
 except ConnectionError as err:
-    print("git-db error: Database connection error: {0}".format(err))
+    utils.print_error("git-db error connecting to the database:", err)
     exit(1)

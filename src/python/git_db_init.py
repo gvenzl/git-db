@@ -24,6 +24,7 @@ import argparse
 import os
 import git_db_database as db
 import git_db_configuration as config
+import git_db_utils as utils
 
 parser = argparse.ArgumentParser(prog="git db init", description="Initialize git repo and database tracking")
 # Currently only Oracle is supported
@@ -49,18 +50,14 @@ if args.user.upper() == "SYS" and not args.all:
 try:
     conn = db.connect("oracle", args.user, args.password, args.host, args.port, args.dbname, args.role)
 except ConnectionError as err:
-    print("git-db error while connecting to the database:")
-    for msg in err.args:
-        print(msg)
+    utils.print_error("git-db error while connecting to the database:", err)
     exit(1)
 
 # Initialize database (schema)
 try:
     db.setup("oracle", conn, args.all)
 except Exception as err:
-    print("git-db error while setting up database objects:")
-    for msg in err.args:
-        print(msg)
+    utils.print_error("git-db error while setting up database objects:", err)
     exit(1)
 finally:
     conn.close()
@@ -69,7 +66,7 @@ finally:
 try:
     os.system("git init")
 except OSError as err:
-    print("git-db error: Error initializing git repo: {0}".format(err))
+    utils.print_error("git-db error while initializing git repo:", err)
     exit(1)
 
 # Store database credentials in git config

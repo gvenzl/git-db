@@ -55,3 +55,9 @@ def pretty_print_result(col_names, result):
     for row in row_values:
         print(tavnit % tuple(row))
     print(separator)
+
+
+def print_error(msg, err):
+    print(msg)
+    for err_msg in err.args:
+        print(err_msg)
