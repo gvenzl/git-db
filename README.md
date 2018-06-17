@@ -50,6 +50,10 @@ Subsequent `git db` commands will acquire the credentials from the `.git/git-db`
       --role ROLE          The database user role (SYSDBA, SYSOPER, ...)
       --all                Track all database changes. If set, the database user
                            must have rights to create a database wide trigger.
+### git db status
+`git db status` displays the not yet tracked database changes.
+
+    usage: git db status
 
 # License
     Copyright 2018 Gerald Venzl
