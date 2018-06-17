@@ -3,7 +3,7 @@
 # Since: May, 2018
 # Author: gvenzl
 # Name: git_db_init.py
-# Description: git db init options
+# Description: git db init option
 #
 # Copyright 2018 Gerald Venzl
 #

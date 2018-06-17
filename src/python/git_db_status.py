@@ -3,7 +3,7 @@
 # Since: June, 2018
 # Author: gvenzl
 # Name: git_db_status.py
-# Description: 
+# Description: git db status option
 #
 # Copyright 2018 Gerald Venzl
 #
