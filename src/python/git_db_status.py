@@ -27,7 +27,7 @@ import git_db_utils as utils
 
 try:
     c = config.get_credentials()
-    conn = db.connect("oracle", c["user"], c["password"], c["host"], c["port"], c["dbname"])
+    conn = db.connect("oracle", c["user"], c["password"], c["host"], c["port"], c["dbname"], c["role"])
     desc, result = db.get_status(conn)
     conn.close()
     print("Uncommitted database changes:")

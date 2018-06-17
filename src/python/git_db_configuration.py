@@ -28,12 +28,13 @@ CONFIG_DIR = "./.git/git-db"
 CREDENTIALS = "credentials"
 
 
-def store_credentials(user, password, host, port, dbname):
+def store_credentials(user, password, host, port, dbname, role):
     credentials = {CREDENTIALS: {"user": user,
                                  "password": base64.b64encode(password.encode("utf-8")).decode("utf-8"),
                                  "host": host,
                                  "port": port,
-                                 "dbname": dbname
+                                 "dbname": dbname,
+                                 "role": role
                                  }
                    }
     if not os.path.exists(CONFIG_DIR):
