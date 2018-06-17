@@ -32,7 +32,7 @@ def connect(dbtype, user, password, host, port, db_name, role):
             return db.connect(user,
                               password,
                               host + ":" + port + "/" + db_name,
-                              0 if role is None else eval("db." + role)
+                              0 if role is None else eval("db." + role.upper())
                               )
         except db.DatabaseError as err:
             raise ConnectionError(err)
