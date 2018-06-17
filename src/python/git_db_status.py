@@ -23,6 +23,7 @@
 import git_db_database as db
 import git_db_configuration as config
 import git_db_utils as utils
+import os
 
 
 try:
@@ -33,6 +34,8 @@ try:
     print("Uncommitted database changes:")
     print("")
     utils.pretty_print_result(desc, result)
+    print("")
+    os.system("git status")
 except FileNotFoundError as err:
     utils.print_error("git-db error while retrieving credentials:", err)
     exit(1)
