@@ -57,7 +57,9 @@ def setup_oracle(conn, all_schemas):
                 cur.execute(stmt)
             except db.DatabaseError as e:
                 # Ignore already existing table
-                if e.args[0].code != 955:
+                if e.args[0].code == 955:
+                    break
+                else:
                     raise db.DatabaseError("Error creating tracking table!", e)
         try:
             target = "DATABASE" if all_schemas else "SCHEMA"
