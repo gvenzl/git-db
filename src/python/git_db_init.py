@@ -78,4 +78,4 @@ def run(cmd):
 
 
 if __name__ == "__main__":
-    exit(run(sys.argv[1:]))
+    raise SystemExit(run(sys.argv[1:]))

@@ -26,19 +26,25 @@ import git_db_utils as utils
 import os
 
 
-try:
-    c = config.get_credentials()
-    conn = db.connect("oracle", c["user"], c["password"], c["host"], c["port"], c["dbname"], c["role"])
-    desc, result = db.get_status(conn)
-    conn.close()
-    print("Uncommitted database changes:")
-    print("")
-    utils.pretty_print_result(desc, result)
-    print("")
-    os.system("git status")
-except FileNotFoundError as err:
-    utils.print_error("git-db error while retrieving credentials:", err)
-    exit(1)
-except ConnectionError as err:
-    utils.print_error("git-db error connecting to the database:", err)
-    exit(1)
+def run():
+    try:
+        c = config.get_credentials()
+        conn = db.connect("oracle", c["user"], c["password"], c["host"], c["port"], c["dbname"], c["role"])
+        desc, result = db.get_status(conn)
+        conn.close()
+        print("Uncommitted database changes:")
+        print("")
+        utils.pretty_print_result(desc, result)
+        print("")
+        os.system("git status")
+        return 0
+    except FileNotFoundError as err:
+        utils.print_error("git-db error while retrieving credentials:", err)
+        return 1
+    except ConnectionError as err:
+        utils.print_error("git-db error connecting to the database:", err)
+        return 1
+
+
+if __name__ == "__main__":
+    raise SystemExit(run())

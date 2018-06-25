@@ -3,7 +3,7 @@
 # Since: June, 2018
 # Author: gvenzl
 # Name: test_git_db_init.py
-# Description: Unit test for git_db_init.py
+# Description: Unit tests for git_db_init.py
 #
 # Copyright 2018 Gerald Venzl
 #
