@@ -20,10 +20,12 @@
 # limitations under the License.
 #
 
+import git_db_configuration as config
+
 
 def get_database(dbtype, user, password, host, port, db_name, role=None):
     """Return database object based on type."""
-    if dbtype == "oracle":
+    if dbtype == config.Database.ORACLE:
         import database.oracle
         return oracle.Database(user, password, host, port, db_name, role)
     else:

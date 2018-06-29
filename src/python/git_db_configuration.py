@@ -23,6 +23,7 @@
 import os
 import json
 import base64
+from enum import Enum
 
 CONFIG_DIR = "./.git/git-db"
 CREDENTIALS = "credentials"
@@ -50,3 +51,7 @@ def get_credentials():
         credentials = json.load(f)[CREDENTIALS]
     credentials["password"] = base64.b64decode(credentials["password"].encode("utf-8")).decode("utf-8")
     return credentials
+
+
+class Database(Enum):
+    ORACLE = 1

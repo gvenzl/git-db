@@ -29,7 +29,8 @@ import os
 def run():
     try:
         c = config.get_credentials()
-        database = db.get_database("oracle", c["user"], c["password"], c["host"], c["port"], c["dbname"], c["role"])
+        database = db.get_database(config.Database.ORACLE,
+                                   c["user"], c["password"], c["host"], c["port"], c["dbname"], c["role"])
         desc, result = database.get_status()
         print("Uncommitted database changes:")
         print("")
