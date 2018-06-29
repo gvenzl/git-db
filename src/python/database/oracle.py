@@ -32,6 +32,9 @@ class Database:
         self.role = role
         self.conn = self._connect()
 
+    def __del__(self):
+        self.conn.close()
+
     def _connect(self):
         """ Connects to the database"""
         try:
