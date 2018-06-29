@@ -23,7 +23,7 @@
 import argparse
 import os
 import sys
-import git_db_database as db
+import database as db
 import git_db_configuration as config
 import git_db_utils as utils
 
@@ -49,21 +49,19 @@ def run(cmd):
     if args.user.upper() == "SYS" and not args.all:
         parser.error("SYS user requires --all parameter.")
 
-    # Test connection
+    # Instantiate DB object
     try:
-        conn = db.connect("oracle", args.user, args.password, args.host, args.port, args.dbname, args.role)
+        database = db.get_database("oracle", args.user, args.password, args.host, args.port, args.dbname, args.role)
     except ConnectionError as err:
         utils.print_error("git-db error while connecting to the database:", err)
         return 1
 
     # Initialize database (schema)
     try:
-        db.setup("oracle", conn, args.all)
+        database.setup(args.all)
     except Exception as err:
         utils.print_error("git-db error while setting up database objects:", err)
         return 1
-    finally:
-        conn.close()
 
     # Run git init on working directory
     try:

@@ -31,7 +31,7 @@ fi
 EXEC_FILE="git-db"
 GITDB_DIR="git-db"
 GITDB_BIN="git-db-bin"
-SCRIPT_FILES="git_db_configuration.py git_db_database.py git_db_init.py git_db_status.py git_db_utils.py"
+SCRIPT_FILES="git_db_configuration.py database/__init__.py database/oracle.py git_db_init.py git_db_status.py git_db_utils.py"
 DB_TYPE="oracle"
 SQL_FILES="setup_table.sql setup_trigger.sql"
 
@@ -94,8 +94,9 @@ case "$1" in
         install -v    -m 0755 "$GITDB_DIR/src/$EXEC_FILE" "$INSTALL_PREFIX"
 
         install -v -d  -m 0755 "$INSTALL_PREFIX/$GITDB_BIN/python"
+        install -v -d  -m 0755 "$INSTALL_PREFIX/$GITDB_BIN/python/database"
         for script_file in $SCRIPT_FILES ; do
-            install -v -m 0755 "$GITDB_DIR/src/python/$script_file" "$INSTALL_PREFIX/$GITDB_BIN/python"
+            install -v -m 0755 "$GITDB_DIR/src/python/$script_file" "$INSTALL_PREFIX/$GITDB_BIN/python/$script_file"
         done
 
         install -v -d  -m 0755 "$INSTALL_PREFIX/$GITDB_BIN/sql/$DB_TYPE"

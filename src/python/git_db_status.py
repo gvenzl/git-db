@@ -20,7 +20,7 @@
 # limitations under the License.
 #
 
-import git_db_database as db
+import database as db
 import git_db_configuration as config
 import git_db_utils as utils
 import os
@@ -29,9 +29,8 @@ import os
 def run():
     try:
         c = config.get_credentials()
-        conn = db.connect("oracle", c["user"], c["password"], c["host"], c["port"], c["dbname"], c["role"])
-        desc, result = db.get_status(conn)
-        conn.close()
+        database = db.get_database("oracle", c["user"], c["password"], c["host"], c["port"], c["dbname"], c["role"])
+        desc, result = database.get_status()
         print("Uncommitted database changes:")
         print("")
         utils.pretty_print_result(desc, result)
