@@ -39,7 +39,7 @@ def pretty_print_result(col_names, result):
             if column is not None:
                 for line in column.split("\n"):
                     widths[idx]["length"] = max(len(line), widths[idx]["length"])
-                row_vals.append(column.lstrip("\n").replace("\x00", ";"))
+                row_vals.append(format_change(column))
             else:
                 row_vals.append(" ")
         row_values.append(row_vals)
@@ -55,6 +55,10 @@ def pretty_print_result(col_names, result):
     for row in row_values:
         print(tavnit % tuple(row))
     print(separator)
+
+
+def format_change(change):
+    return change.lstrip("\n").replace("\x00", ";")
 
 
 def print_error(msg, err):
