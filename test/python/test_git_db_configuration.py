@@ -41,13 +41,13 @@ class GitDBConfigurationTests(unittest.TestCase):
         os.mkdir(".git")
         os.mkdir(".git/git-db")
 
-    def test_store_credentials(self):
+    def test_store_config(self):
         """config.store_credentials should create a new file .git/git-db/git-db.conf"""
-        config.store_credentials(creds["user"], creds["password"], creds["host"],
-                                 creds["port"], creds["dbname"], creds["role"])
+        config.store_config(creds["user"], creds["password"], creds["host"],
+                            creds["port"], creds["dbname"], creds["role"])
         self.assertTrue(os.path.exists(".git/git-db/git-db.conf"))
 
-    def test_store_credentials_no_role(self):
+    def test_store_config_no_role(self):
         """store_credentials should store credentials without role and read it back successfully"""
         creds_no_role = {
                     "user": "unittest",
@@ -57,14 +57,26 @@ class GitDBConfigurationTests(unittest.TestCase):
                     "dbname": "MYDB",
                     "role": None
         }
-        config.store_credentials(creds_no_role["user"], creds_no_role["password"], creds_no_role["host"],
-                                 creds_no_role["port"], creds_no_role["dbname"], creds_no_role["role"])
+        config.store_config(creds_no_role["user"], creds_no_role["password"], creds_no_role["host"],
+                            creds_no_role["port"], creds_no_role["dbname"], creds_no_role["role"])
         self.assertDictEqual(config.get_credentials(), creds_no_role)
+
+    def test_get_tracking_schema(self):
+        """get_tracking should retrieve Tracking.SCHEMA"""
+        config.store_config(creds["user"], creds["password"], creds["host"],
+                            creds["port"], creds["dbname"], creds["role"], False)
+        self.assertEqual(config.get_tracking(), config.Tracking.SCHEMA)
+
+    def test_get_tracking_database(self):
+        """get_tracking should retrieve Tracking.DATABASE"""
+        config.store_config(creds["user"], creds["password"], creds["host"],
+                            creds["port"], creds["dbname"], creds["role"], True)
+        self.assertEqual(config.get_tracking(), config.Tracking.DATABASE)
 
     def test_get_credentials(self):
         """get_credentials should retrieve correct credentials"""
-        config.store_credentials(creds["user"], creds["password"], creds["host"],
-                                 creds["port"], creds["dbname"], creds["role"])
+        config.store_config(creds["user"], creds["password"], creds["host"],
+                            creds["port"], creds["dbname"], creds["role"])
         self.assertDictEqual(config.get_credentials(), creds)
 
     def tearDown(self):

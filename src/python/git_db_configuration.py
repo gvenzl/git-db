@@ -29,29 +29,43 @@ CONFIG_DIR = "./.git/git-db"
 CREDENTIALS = "credentials"
 
 
-def store_credentials(user, password, host, port, dbname, role):
-    credentials = {CREDENTIALS: {"user": user,
-                                 "password": base64.b64encode(password.encode("utf-8")).decode("utf-8"),
-                                 "host": host,
-                                 "port": port,
-                                 "dbname": dbname,
-                                 "role": role
-                                 }
-                   }
+def store_config(user, password, host, port, dbname, role, all_schemas=False):
+    config = {CREDENTIALS: {"user": user,
+                            "password": base64.b64encode(password.encode("utf-8")).decode("utf-8"),
+                            "host": host,
+                            "port": port,
+                            "dbname": dbname,
+                            "role": role
+                            },
+              "tracking": Tracking.DATABASE.value if all_schemas else Tracking.SCHEMA.value
+              }
     if not os.path.exists(CONFIG_DIR):
         os.mkdir(CONFIG_DIR)
     with open(CONFIG_DIR + "/git-db.conf", "w") as f:
-        f.write(json.dumps(credentials, indent=2))
+        f.write(json.dumps(config, indent=2))
 
 
 def get_credentials():
-    if not os.path.exists(CONFIG_DIR):
-        raise FileNotFoundError("Configuration directory does not exist. Has the repository been initialized yet?")
-    with open(CONFIG_DIR + "/git-db.conf", "r") as f:
-        credentials = json.load(f)[CREDENTIALS]
+    credentials = _get_config()[CREDENTIALS]
     credentials["password"] = base64.b64decode(credentials["password"].encode("utf-8")).decode("utf-8")
     return credentials
 
 
+def get_tracking():
+    return Tracking[_get_config()["tracking"]]
+
+
+def _get_config():
+    if not os.path.exists(CONFIG_DIR):
+        raise FileNotFoundError("Configuration directory does not exist. Has the repository been initialized yet?")
+    with open(CONFIG_DIR + "/git-db.conf", "r") as f:
+        return json.load(f)
+
+
 class Database(Enum):
     ORACLE = 1
+
+
+class Tracking(Enum):
+    DATABASE = "DATABASE"
+    SCHEMA = "SCHEMA"

@@ -72,7 +72,7 @@ def run(cmd):
         return 1
 
     # Store database credentials in git config
-    config.store_credentials(args.user, args.password, args.host, args.port, args.dbname, args.role)
+    config.store_config(args.user, args.password, args.host, args.port, args.dbname, args.role)
     return 0
 
 
