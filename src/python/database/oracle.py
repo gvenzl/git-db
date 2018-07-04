@@ -25,15 +25,15 @@ import os
 
 
 class Database:
+
+    _new_commit_id = "NEWCOMMIT"
+
     def __init__(self, user, password, host, port, db_name, role):
         self.user = user
         self.password = password
         self.URL = host + ":" + port + "/" + db_name
         self.role = role
         self.conn = self._connect()
-
-    def __del__(self):
-        self.conn.close()
 
     def _connect(self):
         """ Connects to the database"""
@@ -115,6 +115,49 @@ class Database:
             col_names.append(col_name[0])
         cur.close()
         return col_names, result
+
+    def add_changes(self, name, user, owner, db_object):
+        try:
+            stmt = "UPDATE GITDB_CHANGES SET commit_id=:1 WHERE commit_id IS NULL"
+            if name == "." and (db_object is False and owner is False and user is False):
+                pass
+            elif user is True:
+                stmt += " AND change_user=:2"
+            elif owner is True:
+                stmt += " AND object_owner=:2"
+            elif db_object is True:
+                stmt += " AND object_name=:2"
+            else:
+                raise ValueError("Invalid values for add_changes: name: '{}', db_object: '{}', owner: '{}', user: '{}'"
+                                 .format(name, db_object, owner, user))
+            params = (self._new_commit_id,)
+            if name is not None and name != '.':
+                params += (name,)
+            cur = self.conn.cursor()
+            cur.execute(stmt, params)
+            cur.close()
+            self.conn.commit()
+
+            return self._get_added_changes()
+
+        except db.DatabaseError as err:
+            raise RuntimeError("Cannot add changes!", err)
+
+    def _get_added_changes(self):
+        # Output Handler for CLOBs
+        def output_type_handler(cursor, name, defaultType, size, precision, scale):
+            if defaultType == db.CLOB:
+                return cursor.var(db.LONG_STRING, arraysize=cursor.arraysize)
+
+        self.conn.outputtypehandler = output_type_handler
+        cur = self.conn.cursor()
+        cur.execute("""SELECT object_owner, object_name, change
+                         FROM GITDB_CHANGES
+                           WHERE commit_id=:1
+                             ORDER BY object_owner, object_name""", (self._new_commit_id,))
+        result = cur.fetchall()
+        cur.close()
+        return result
 
 
 def _get_setup_table():

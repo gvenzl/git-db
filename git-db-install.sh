@@ -31,7 +31,7 @@ fi
 EXEC_FILE="git-db"
 GITDB_DIR="git-db"
 GITDB_BIN="git-db-bin"
-SCRIPT_FILES="git_db_configuration.py database/__init__.py database/oracle.py git_db_init.py git_db_status.py git_db_utils.py"
+SCRIPT_FILES="git_db_configuration.py database/__init__.py database/oracle.py git_db_init.py git_db_status.py git_db_utils.py git_db_add.py"
 DB_TYPE="oracle"
 SQL_FILES="setup_table.sql setup_trigger.sql"
 
