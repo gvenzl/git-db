@@ -28,6 +28,9 @@ Following databases are currently supported: `Oracle`
     grow, mark and tweak your common history
        commit     Record changes to the repository
        tag        Tag a commit  
+       
+    destroy a working area
+       deinit     Destroy the Git DB repository
 
 ### git db init
 `git db init` enables a given database schema, or the entire database via the `--all` flag, for DDL change tracking.
@@ -54,6 +57,86 @@ Subsequent `git db` commands will acquire the credentials from the `.git/git-db`
 `git db status` displays the not yet tracked database changes.
 
     usage: git db status
+    
+    gvenzl-mac:schema1 gvenzl$ git db status
+    Uncommitted database changes:
+    
+    +-----+---------------------+-------------+-------------+-------------+------------------------------------------------------------------------+
+    | TAG | CHANGE_TMS          | CHANGE_USER | OBJECT_NAME | OBJECT_TYPE | CHANGE                                                                 |
+    +-----+---------------------+-------------+-------------+-------------+------------------------------------------------------------------------+
+    |     | 2018-07-01 05:07:23 | TEST        | PEOPLE      | TABLE       | create table people (first_name varchar2(25), last_name varchar2(25)); |
+    |     | 2018-07-01 05:07:36 | TEST        | PEOPLE      | TABLE       | alter table people add (middle_name varchar2(25));                     |
+    +-----+---------------------+-------------+-------------+-------------+------------------------------------------------------------------------+
+    
+    On branch master
+    
+    No commits yet
+    
+    nothing to commit (create/copy files and use "git add" to track)
+
+### git db add
+`git db add` adds database changes to git.
+
+    usage: git db add [-h] [--user] [--owner] [--object] User|Owner|Object|.
+    
+    Adds database changes to the git repo
+    
+    positional arguments:
+      User|Owner|Object|.  The change(s) to add
+    
+    optional arguments:
+      -h, --help           show this help message and exit
+      --user               add all changes made by the following user
+      --owner              add all changes made for the following object owner
+      --object             add all changes for the following object
+    
+    Use '.' to add all changes or specify change type parameter and value.
+    For example:
+    
+    To add all changes made by user "GERALD" run "git add --user GERALD"
+    To add all changes made on objects owned by owner "MYSCHEMA" run "git add --owner MYSCHEMA"
+    To add all changes made on a specific object, e.g. the table "ORDERS" run  "git add --object ORDERS"
+    To add all changes that have happened run "git add ."
+    
+A sample output adding all changes:
+
+    gvenzl-mac:schema1 gvenzl$ git db status
+    Uncommitted database changes:
+    
+    +-----+---------------------+-------------+-------------+-------------+------------------------------------------------------------------------+
+    | TAG | CHANGE_TMS          | CHANGE_USER | OBJECT_NAME | OBJECT_TYPE | CHANGE                                                                 |
+    +-----+---------------------+-------------+-------------+-------------+------------------------------------------------------------------------+
+    |     | 2018-07-01 05:07:23 | TEST        | PEOPLE      | TABLE       | create table people (first_name varchar2(25), last_name varchar2(25)); |
+    |     | 2018-07-01 05:07:36 | TEST        | PEOPLE      | TABLE       | alter table people add (middle_name varchar2(25));                     |
+    +-----+---------------------+-------------+-------------+-------------+------------------------------------------------------------------------+
+    
+    On branch master
+    
+    No commits yet
+    
+    nothing to commit (create/copy files and use "git add" to track)
+    gvenzl-mac:schema1 gvenzl$ git db add .
+    gvenzl-mac:schema1 gvenzl$ git db status
+    Uncommitted database changes:
+    
+    +-----+------------+-------------+-------------+-------------+--------+
+    | TAG | CHANGE_TMS | CHANGE_USER | OBJECT_NAME | OBJECT_TYPE | CHANGE |
+    +-----+------------+-------------+-------------+-------------+--------+
+    +-----+------------+-------------+-------------+-------------+--------+
+    
+    On branch master
+    
+    No commits yet
+    
+    Changes to be committed:
+      (use "git rm --cached <file>..." to unstage)
+    
+    	new file:   PEOPLE.sql
+    
+    gvenzl-mac:schema1 gvenzl$ cat PEOPLE.sql
+    create table people (first_name varchar2(25), last_name varchar2(25));
+    alter table people add (middle_name varchar2(25));
+    gvenzl-mac:schema1 gvenzl$
 
 # License
     Copyright 2018 Gerald Venzl
