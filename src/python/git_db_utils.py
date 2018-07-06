@@ -20,8 +20,10 @@
 # limitations under the License.
 #
 
+from enum import Enum
 
-def pretty_print_result(col_names, result):
+
+def pretty_print_result(col_names, result, color=None):
     widths = []
     column_names = []
     row_values = []
@@ -49,12 +51,17 @@ def pretty_print_result(col_names, result):
         tavnit += " %-" + "%ss |" % col_length
         separator += '-' * col_length + '--+'
 
+    # Set color if set
+    if color is not None:
+        print(color.value, end='')
     print(separator)
     print(tavnit % tuple(column_names))
     print(separator)
     for row in row_values:
         print(tavnit % tuple(row))
     print(separator)
+    if color is not None:
+        print(Color.RESET.value, end='')
 
 
 def format_change(change):
@@ -65,3 +72,10 @@ def print_error(msg, err):
     print(msg)
     for err_msg in err.args:
         print(err_msg)
+
+
+class Color(Enum):
+    GREEN = "\x1b[32m"
+    RED = "\x1b[31m"
+    RESET = "\x1b[0m"
+

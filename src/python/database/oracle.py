@@ -96,7 +96,24 @@ class Database:
         finally:
             cur.close()
 
-    def get_status(self):
+    def get_uncommitted_changes(self):
+        return self._get_changes("""SELECT tag, TO_CHAR(change_tms,'YYYY-MM-DD HH24:MI:SS') AS CHANGE_TMS,
+                                           change_user, object_name, object_type, change
+                                      FROM GITDB_CHANGES
+                                        WHERE COMMIT_ID IS NULL
+                                          ORDER BY CHANGE_TMS"""
+                                 )
+
+    def get_added_changes(self):
+        return self._get_changes("""SELECT tag, TO_CHAR(change_tms,'YYYY-MM-DD HH24:MI:SS') AS CHANGE_TMS,
+                                           change_user, object_name, object_type, change
+                                      FROM GITDB_CHANGES
+                                        WHERE commit_id=:1
+                                          ORDER BY object_owner, object_name""",
+                                 (self._new_commit_id,)
+                                 )
+
+    def _get_changes(self, stmt, params=()):
         # Output Handler for CLOBs
         def output_type_handler(cursor, name, defaultType, size, precision, scale):
             if defaultType == db.CLOB:
@@ -104,11 +121,7 @@ class Database:
 
         self.conn.outputtypehandler = output_type_handler
         cur = self.conn.cursor()
-        cur.execute("""SELECT TAG, TO_CHAR(CHANGE_TMS,'YYYY-MM-DD HH24:MI:SS') AS CHANGE_TMS,
-                              CHANGE_USER, OBJECT_NAME, OBJECT_TYPE, CHANGE
-                           FROM GITDB_CHANGES
-                               WHERE COMMIT_ID IS NULL
-                                   ORDER BY CHANGE_TMS""")
+        cur.execute(stmt, params)
         col_names = []
         result = cur.fetchall()
         for col_name in cur.description:
