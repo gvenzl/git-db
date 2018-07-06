@@ -32,15 +32,17 @@ def run():
         database = db.get_database(config.Database.ORACLE,
                                    c["user"], c["password"], c["host"], c["port"], c["dbname"], c["role"])
         desc, result = database.get_added_changes()
-        print("Changes to be committed:")
-        print()
-        utils.pretty_print_result(desc, result, utils.Color.GREEN)
-        print()
+        if result:
+            print("Changes to be committed:")
+            print()
+            utils.pretty_print_result(desc, result, utils.Color.GREEN)
+            print()
         desc, result = database.get_uncommitted_changes()
-        print("Uncommitted database changes:")
-        print()
-        utils.pretty_print_result(desc, result, utils.Color.RED)
-        print()
+        if result:
+            print("Uncommitted database changes:")
+            print()
+            utils.pretty_print_result(desc, result, utils.Color.RED)
+            print()
         os.system("git status")
         return 0
     except FileNotFoundError as err:

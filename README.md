@@ -117,12 +117,14 @@ A sample output adding all changes:
     nothing to commit (create/copy files and use "git add" to track)
     gvenzl-mac:schema1 gvenzl$ git db add .
     gvenzl-mac:schema1 gvenzl$ git db status
-    Uncommitted database changes:
+    Changes to be committed:
     
-    +-----+------------+-------------+-------------+-------------+--------+
-    | TAG | CHANGE_TMS | CHANGE_USER | OBJECT_NAME | OBJECT_TYPE | CHANGE |
-    +-----+------------+-------------+-------------+-------------+--------+
-    +-----+------------+-------------+-------------+-------------+--------+
+    +-----+---------------------+-------------+-------------+-------------+------------------------------------------------------------------------+
+    | TAG | CHANGE_TMS          | CHANGE_USER | OBJECT_NAME | OBJECT_TYPE | CHANGE                                                                 |
+    +-----+---------------------+-------------+-------------+-------------+------------------------------------------------------------------------+
+    |     | 2018-07-01 05:07:23 | TEST        | PEOPLE      | TABLE       | create table people (first_name varchar2(25), last_name varchar2(25)); |
+    |     | 2018-07-01 05:07:36 | TEST        | PEOPLE      | TABLE       | alter table people add (middle_name varchar2(25));                     |
+    +-----+---------------------+-------------+-------------+-------------+------------------------------------------------------------------------+
     
     On branch master
     
