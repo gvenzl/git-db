@@ -19,14 +19,16 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
+import git_db_configuration as c
 
-import git_db_configuration as config
 
-
-def get_database(dbtype, user, password, host, port, db_name, role=None):
+def get_database(config):
     """Return database object based on type."""
-    if dbtype == config.Database.ORACLE:
+    dbtype = c.Database(config[c.DBTYPE])
+    credentials = config[c.CREDENTIALS]
+    if dbtype == c.Database.ORACLE:
         import database.oracle
-        return oracle.Database(user, password, host, port, db_name, role)
+        return oracle.Database(credentials["user"], credentials["password"], credentials["host"],
+                               credentials["port"], credentials["dbname"], credentials["role"])
     else:
-        raise NotImplementedError("Database type '" + dbtype + "' is not supported by Git DB.")
+        raise NotImplementedError("Database type {0} is not supported by Git DB.".format(dbtype))

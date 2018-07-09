@@ -50,10 +50,8 @@ def run(cmd):
     parser.add_argument("change",   help="The change(s) to add", metavar="User|Owner|Object|.")
     args = parser.parse_args(cmd)
 
-    c = config.get_credentials()
     try:
-        database = db.get_database(config.Database.ORACLE,
-                                   c["user"], c["password"], c["host"], c["port"], c["dbname"], c["role"])
+        database = db.get_database(config.get_config())
         changes = database.add_changes(args.change.upper(), args.user, args.owner, args.object)
         _write_changes_to_files(changes)
     except ConnectionError as err:

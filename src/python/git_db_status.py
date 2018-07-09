@@ -28,9 +28,7 @@ import os
 
 def run():
     try:
-        c = config.get_credentials()
-        database = db.get_database(config.Database.ORACLE,
-                                   c["user"], c["password"], c["host"], c["port"], c["dbname"], c["role"])
+        database = db.get_database(config.get_config())
         desc, result = database.get_added_changes()
         if result:
             print("Changes to be committed:")

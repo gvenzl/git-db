@@ -24,7 +24,7 @@
 import unittest
 import shutil
 import os
-import git_db_configuration as config
+import git_db_configuration as c
 
 creds = {
     "user": "unittest",
@@ -42,9 +42,10 @@ class GitDBConfigurationTests(unittest.TestCase):
         os.mkdir(".git/git-db")
 
     def test_store_config(self):
-        """config.store_credentials should create a new file .git/git-db/git-db.conf"""
-        config.store_config(creds["user"], creds["password"], creds["host"],
-                            creds["port"], creds["dbname"], creds["role"])
+        """c.store_credentials should create a new file .git/git-db/git-db.conf"""
+        c.store_config(c.build_config(c.Database.ORACLE,
+                                      creds["user"], creds["password"], creds["host"],
+                                      creds["port"], creds["dbname"], creds["role"]))
         self.assertTrue(os.path.exists(".git/git-db/git-db.conf"))
 
     def test_store_config_no_role(self):
@@ -57,27 +58,31 @@ class GitDBConfigurationTests(unittest.TestCase):
                     "dbname": "MYDB",
                     "role": None
         }
-        config.store_config(creds_no_role["user"], creds_no_role["password"], creds_no_role["host"],
-                            creds_no_role["port"], creds_no_role["dbname"], creds_no_role["role"])
-        self.assertDictEqual(config.get_credentials(), creds_no_role)
+        c.store_config(c.build_config(c.Database.ORACLE,
+                                      creds_no_role["user"], creds_no_role["password"], creds_no_role["host"],
+                                      creds_no_role["port"], creds_no_role["dbname"], creds_no_role["role"]))
+        self.assertDictEqual(c.get_config()[c.CREDENTIALS], creds_no_role)
 
     def test_get_tracking_schema(self):
         """get_tracking should retrieve Tracking.SCHEMA"""
-        config.store_config(creds["user"], creds["password"], creds["host"],
-                            creds["port"], creds["dbname"], creds["role"], False)
-        self.assertEqual(config.get_tracking(), config.Tracking.SCHEMA)
+        c.store_config(c.build_config(c.Database.ORACLE,
+                                      creds["user"], creds["password"], creds["host"],
+                                      creds["port"], creds["dbname"], creds["role"], False))
+        self.assertEqual(c.get_tracking(), c.Tracking.SCHEMA)
 
     def test_get_tracking_database(self):
         """get_tracking should retrieve Tracking.DATABASE"""
-        config.store_config(creds["user"], creds["password"], creds["host"],
-                            creds["port"], creds["dbname"], creds["role"], True)
-        self.assertEqual(config.get_tracking(), config.Tracking.DATABASE)
+        c.store_config(c.build_config(c.Database.ORACLE,
+                                      creds["user"], creds["password"], creds["host"],
+                                      creds["port"], creds["dbname"], creds["role"], True))
+        self.assertEqual(c.get_tracking(), c.Tracking.DATABASE)
 
-    def test_get_credentials(self):
-        """get_credentials should retrieve correct credentials"""
-        config.store_config(creds["user"], creds["password"], creds["host"],
-                            creds["port"], creds["dbname"], creds["role"])
-        self.assertDictEqual(config.get_credentials(), creds)
+    def test_retrieve_credentials(self):
+        """get_config should retrieve correct credentials"""
+        c.store_config(c.build_config(c.Database.ORACLE,
+                                      creds["user"], creds["password"], creds["host"],
+                                      creds["port"], creds["dbname"], creds["role"], True))
+        self.assertDictEqual(c.get_config()[c.CREDENTIALS], creds)
 
     def tearDown(self):
         shutil.rmtree(".git")

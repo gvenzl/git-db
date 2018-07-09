@@ -51,8 +51,12 @@ def run(cmd):
 
     # Instantiate DB object
     try:
-        database = db.get_database(config.Database.ORACLE,
-                                   args.user, args.password, args.host, args.port, args.dbname, args.role)
+        database = db.get_database(
+                                   config.build_config(
+                                                       config.Database.ORACLE,
+                                                       args.user, args.password,
+                                                       args.host, args.port, args.dbname,
+                                                       args.role))
     except ConnectionError as err:
         utils.print_error("git-db error while connecting to the database:", err)
         return 1
@@ -71,8 +75,13 @@ def run(cmd):
         utils.print_error("git-db error while initializing git repo:", err)
         return 1
 
-    # Store database credentials in git config
-    config.store_config(args.user, args.password, args.host, args.port, args.dbname, args.role)
+    # Store configuration git config
+    config.store_config(
+                        config.build_config(
+                                            config.Database.ORACLE,
+                                            args.user, args.password,
+                                            args.host, args.port, args.dbname,
+                                            args.role, args.all))
     return 0
 
 
