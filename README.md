@@ -140,6 +140,27 @@ A sample output adding all changes:
     alter table people add (middle_name varchar2(25));
     gvenzl-mac:schema1 gvenzl$
 
+### git db deinit
+`git db deinit` will remove the change tracking from the databases. The local git repository will remain intact:
+
+    gvenzl-mac:schema1 gvenzl$ git db deinit
+    Removed change tracking
+    gvenzl-mac:schema1 gvenzl$ ls -al
+    total 0
+    drwxr-xr-x   3 gvenzl  staff   96 Jul  9 22:44 .
+    drwxr-xr-x   7 gvenzl  staff  224 Jul  9 22:41 ..
+    drwxr-xr-x  10 gvenzl  staff  320 Jul  9 22:44 .git
+
+Pass on the `--all` option to remove the change tracking from the database and the local git repository:
+
+    gvenzl-mac:schema1 gvenzl$ git db deinit --all
+    Removed change tracking
+    Removed local git repository
+    gvenzl-mac:schema1 gvenzl$ ls -al
+    total 0
+    drwxr-xr-x  2 gvenzl  staff   64 Jul  9 22:45 .
+    drwxr-xr-x  7 gvenzl  staff  224 Jul  9 22:41 ..
+
 # License
     Copyright 2018 Gerald Venzl
  

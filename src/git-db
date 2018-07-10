@@ -44,6 +44,8 @@ function usage() {
     echo "grow, mark and tweak your common history";
     echo "   commit     Record changes to the repository";
     echo "   tag        Tag a commit";
+    echo "destroy a working area";
+    echo "   deinit     Destroy the Git DB repository";
 }
 
 function version() {

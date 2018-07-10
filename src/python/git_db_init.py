@@ -64,6 +64,7 @@ def run(cmd):
     # Initialize database (schema)
     try:
         database.setup(args.all)
+        print("Setup change tracking")
     except Exception as err:
         utils.print_error("git-db error while setting up database objects:", err)
         return 1
