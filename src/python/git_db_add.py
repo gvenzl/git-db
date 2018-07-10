@@ -22,6 +22,7 @@
 
 import sys
 import os
+import shlex
 import argparse
 import textwrap
 import database as db
@@ -66,32 +67,30 @@ def _write_changes_to_files(added_changes):
     prev_owner = ""
     prev_name = ""
     file = None
-    file_name = ""
     for owner, name, change in added_changes:
+        file_name = name + ".sql"
         # If tracking all changes, put changes into individual folders named after the schema
         if tracking_all:
-            file_name = owner + "/" + name + ".sql"
+            # Append owner directory to file name
+            file_name = owner + "/" + file_name
             if owner != prev_owner:
                 if not os.path.exists(owner):
                     os.mkdir(owner)
                 prev_owner = owner
-        # If tracking just schema changes, put all changes in current directory
-        else:
-            file_name = name + ".sql"
 
         # New object == new file
         if name != prev_name:
             # Close previous file (not open for first change)
             if file is not None:
                 file.close()
-                os.system("git add " + file_name)
+                os.system("git add " + shlex.quote(file.name))
             file = open(file_name, "a")
             prev_name = name
         file.write(utils.format_change(change) + "\n")
     # In cases no changes happened
     if file is not None:
         file.close()
-        os.system("git add " + file_name)
+        os.system("git add " + shlex.quote(file.name))
 
 
 if __name__ == "__main__":
