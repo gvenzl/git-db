@@ -18,7 +18,6 @@ Following databases are currently supported: `Oracle`
     work on the current change
        add        Add a DDL change to the index
        reset      Reset current HEAD to the specified state
-       squash     Squash changes on a given object into a single file
 
     examine the history and state
        log        Show commit logs
