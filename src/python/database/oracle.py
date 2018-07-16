@@ -20,8 +20,9 @@
 # limitations under the License.
 #
 
-import cx_Oracle as db
 import os
+
+import cx_Oracle as db
 
 
 class Database:
@@ -171,6 +172,16 @@ class Database:
         result = cur.fetchall()
         cur.close()
         return result
+
+    def set_commit_id(self, git_id):
+        try:
+            cur = self.conn.cursor()
+            cur.execute("""UPDATE GITDB_CHANGES
+                             SET commit_id=:1 WHERE commit_id=:2""", (git_id, self._new_commit_id))
+            cur.close()
+            self.conn.commit()
+        except db.DatabaseError as err:
+            raise RuntimeError("Cannot set commit id for committed changes!", err)
 
 
 def _get_setup_table():
