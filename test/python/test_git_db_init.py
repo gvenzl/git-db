@@ -22,7 +22,8 @@
 
 
 import unittest
-import shutil
+
+import git_db_deinit
 import git_db_init as init
 
 
@@ -31,6 +32,7 @@ class GitDbInitTestCase(unittest.TestCase):
         """Test initialization of repository"""
         self.assertEqual(0, init.run(["--user", "test", "--password", "test",
                                       "--host", "localhost", "--port", "1521", "--dbname", "ORCLPDB1"]))
+        self.assertEqual(0, git_db_deinit.run(["--all"]))
 
     def test_git_db_init_already_existing_repo(self):
         """Test reinitialization of a repository"""
@@ -38,14 +40,12 @@ class GitDbInitTestCase(unittest.TestCase):
                                       "--host", "localhost", "--port", "1521", "--dbname", "ORCLPDB1"]))
         self.assertEqual(0, init.run(["--user", "test", "--password", "test",
                                       "--host", "localhost", "--port", "1521", "--dbname", "ORCLPDB1"]))
+        self.assertEqual(0, git_db_deinit.run(["--all"]))
 
     def test_negative_init_database_not_running(self):
         """Negative test of not running database"""
         self.assertEqual(1, init.run(["--user", "does", "--password", "not",
                                       "--host", "localhost", "--port", "1521", "--dbname", "exist"]))
-
-    def tearDown(self):
-        self.assertIsNone(shutil.rmtree(".git", True))
 
 
 if __name__ == '__main__':

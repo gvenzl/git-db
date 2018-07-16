@@ -22,9 +22,10 @@
 
 
 import unittest
-import git_db_status
+
+import git_db_deinit
 import git_db_init
-import shutil
+import git_db_status
 
 
 class GitDbStatusTestCase(unittest.TestCase):
@@ -32,7 +33,7 @@ class GitDbStatusTestCase(unittest.TestCase):
         self.assertEqual(0, git_db_init.run(["--user", "test", "--password", "test",
                                              "--host", "localhost", "--port", "1521", "--dbname", "ORCLPDB1"]))
         self.assertEqual(0, git_db_status.run())
-        self.assertIsNone(shutil.rmtree(".git"))
+        self.assertEqual(0, git_db_deinit.run(["--all"]))
 
 
 if __name__ == '__main__':

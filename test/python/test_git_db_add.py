@@ -21,11 +21,12 @@
 #
 
 import unittest
+
+import test_utils
+
 import git_db_add
+import git_db_deinit
 import git_db_init
-import shutil
-import os
-import glob
 
 
 class GitDbAddTestCase(unittest.TestCase):
@@ -44,7 +45,7 @@ class GitDbAddTestCase(unittest.TestCase):
         print()
         self.assertEqual(0, git_db_init.run(["--user", self.test_user, "--password", self.test_password,
                                              "--host", self.db_host, "--port", self.db_port, "--dbname", self.db_name]))
-        self.assertEqual(git_db_add.run(["."]), 0)
+        self.assertEqual(0, git_db_add.run(["."]))
 
     def test_all_database_changes(self):
         print()
@@ -53,7 +54,7 @@ class GitDbAddTestCase(unittest.TestCase):
         self.assertEqual(0,
                          git_db_init.run(["--user", self.system_user, "--password", self.system_password, "--all",
                                           "--host", self.db_host, "--port", self.db_port, "--dbname", self.db_name]))
-        self.assertEqual(git_db_add.run(["."]), 0)
+        self.assertEqual(0, git_db_add.run(["."]))
 
     def test_user_changes(self):
         print()
@@ -86,14 +87,8 @@ class GitDbAddTestCase(unittest.TestCase):
         self.assertEqual(git_db_add.run(["--object", "NEWTABLE"]), 0)
 
     def tearDown(self):
-        # Delete all .sql files
-        for fl in glob.glob(os.path.dirname(os.path.realpath(__file__)) + "/*.sql"):
-            os.remove(fl)
-        # Delete all sub directories
-        for d in os.listdir(os.path.dirname(os.path.realpath(__file__))):
-            shutil.rmtree(d, True)
-        # Delete ".git" directory
-        shutil.rmtree(".git", True)
+        git_db_deinit.run(["--all"])
+        test_utils.cleanup()
 
 
 if __name__ == '__main__':
