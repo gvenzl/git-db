@@ -20,11 +20,12 @@
 # limitations under the License.
 #
 
-import sys
+import argparse
 import os
 import shlex
-import argparse
+import sys
 import textwrap
+
 import database as db
 import git_db_configuration as config
 import git_db_utils as utils
@@ -33,7 +34,7 @@ import git_db_utils as utils
 def run(cmd):
     parser = argparse.ArgumentParser(prog="git db add",
                                      formatter_class=argparse.RawDescriptionHelpFormatter,
-                                     description="Adds database changes to the git repo",
+                                     description="Add database changes to the git repo",
                                      epilog=textwrap.dedent("""
                  Use '.' to add all changes or specify change type parameter and value.
                  For example:
