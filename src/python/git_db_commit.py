@@ -28,9 +28,8 @@ import git_db_configuration as config
 import git_db_utils as utils
 
 
-def run(args):
-    # TODO: Use arg parser to allow "git db commit --all"
-    ret = _git_commit(args)
+def run(cmd):
+    ret = _git_commit(cmd)
     if ret != 0:
         return ret
     try:
