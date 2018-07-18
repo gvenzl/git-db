@@ -22,6 +22,8 @@
 
 import cx_Oracle
 
+TABLE_NAME = "UNIT_TEST"
+
 
 def _connect_schema():
     return cx_Oracle.connect("test", "test", "localhost:1521/ORCLPDB1")
@@ -30,17 +32,19 @@ def _connect_schema():
 def create_schema_objects():
     con = _connect_schema()
     cur = con.cursor()
-    cur.execute("""CREATE TABLE UNIT_TEST (ID NUMBER, TEXT VARCHAR2(25))""")
-    cur.execute("""CREATE UNIQUE INDEX TEST_PK ON UNIT_TEST (ID)""")
-    cur.execute("""ALTER TABLE UNIT_TEST ADD PRIMARY KEY (ID)""")
-    cur.execute("""ANALYZE TABLE UNIT_TEST COMPUTE STATISTICS""")
+    cur.execute("CREATE TABLE " + TABLE_NAME + " (ID NUMBER, TEXT VARCHAR2(25))")
+    cur.execute("CREATE UNIQUE INDEX TEST_PK ON " + TABLE_NAME + " (ID)")
+    cur.execute("ALTER TABLE " + TABLE_NAME + " ADD PRIMARY KEY (ID)")
+    cur.execute("ANALYZE TABLE " + TABLE_NAME + " COMPUTE STATISTICS")
+    cur.execute("RENAME " + TABLE_NAME + " TO MY_UNIT_TEST")
+    cur.execute("RENAME MY_UNIT_TEST TO " + TABLE_NAME)
+    cur.execute("GRANT INSERT ON " + TABLE_NAME + " TO PUBLIC")
+    cur.execute("REVOKE INSERT ON " + TABLE_NAME + " FROM PUBLIC")
+    cur.execute("TRUNCATE TABLE " + TABLE_NAME)
+    cur.execute("DROP TABLE " + TABLE_NAME)
     cur.close()
     con.close()
 
 
 def reset_schema():
-    con = _connect_schema()
-    cur = con.cursor()
-    cur.execute("""DROP TABLE UNIT_TEST""")
-    cur.close()
-    con.close()
+    pass
