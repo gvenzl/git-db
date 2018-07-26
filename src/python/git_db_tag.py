@@ -2,8 +2,8 @@
 #
 # Since: July, 2018
 # Author: gvenzl
-# Name: git_db_commit.py
-# Description: git db commit option
+# Name: git_db_tag.py
+# Description: git db tag option
 #
 # Copyright 2018 Gerald Venzl
 #
@@ -20,7 +20,7 @@
 # limitations under the License.
 #
 
-import subprocess
+import argparse
 import sys
 
 import database
@@ -29,30 +29,22 @@ import git_db_utils as utils
 
 
 def run(cmd):
-    ret = _git_commit(cmd)
-    if ret != 0:
-        return ret
-    try:
-        git_commit_id = utils.get_git_commit_id()
-    except RuntimeError as err:
-        utils.print_error("git-db error while retrieving git commit id:", err)
-        return 1
+    parser = argparse.ArgumentParser(prog="git db tag",
+                                     description="Tags changes")
+    parser.add_argument("tag", help="The tag to add")
+    parser.add_argument("commit", help="The commit to apply the tag")
+    args = parser.parse_args(cmd)
+    return _add_tag(args.tag, args.commit)
+
+
+def _add_tag(tag, commit):
     try:
         db = database.get_database(config.get_config())
+        db.set_tag(tag, commit)
+        return 0
     except (ConnectionError, FileNotFoundError) as err:
         utils.print_error("git-db error while connecting to the database:", err)
         return 1
-    try:
-        db.set_commit_id(git_commit_id)
-    except RuntimeError as err:
-        subprocess.run(["git", "reset", "--soft", "HEAD^"])
-        utils.print_error("git-db error while storing commit id to the database:", err)
-        return 2
-    return 0
-
-
-def _git_commit(args):
-    return subprocess.run(["git", "commit"] + args).returncode
 
 
 if __name__ == "__main__":

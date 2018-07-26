@@ -20,6 +20,7 @@
 # limitations under the License.
 #
 
+import subprocess
 from enum import Enum
 
 
@@ -72,6 +73,15 @@ def print_error(msg, err):
     print(msg)
     for err_msg in err.args:
         print(err_msg)
+
+
+def get_git_commit_id():
+    """Return git commit log"""
+    p = subprocess.run(["git", "log"], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+    if p.returncode != 0:
+        raise RuntimeError(p.stderr.decode("utf-8"))
+    output = p.stdout.decode("utf-8")
+    return output.split()[1:2][0]
 
 
 class Color(Enum):
