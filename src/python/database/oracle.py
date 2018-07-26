@@ -191,8 +191,14 @@ class Database:
     def set_tag(self, tag, commit_id):
         try:
             cur = self.conn.cursor()
-            cur.execute("""UPDATE GITDB_CHANGES
-                             SET tag=:1 WHERE commit_id=:2""", (tag, commit_id))
+            # Check whether commit id is full one or abbreviated
+            if len(commit_id) == 40:
+                stmt = """UPDATE GITDB_CHANGES
+                             SET tag=:1 WHERE commit_id=:2"""
+            else:
+                stmt = """UPDATE GITDB_CHANGES
+                             SET tag=:1 WHERE commit_id LIKE CONCAT(:2,'%')"""
+            cur.execute(stmt, (tag, commit_id))
             cur.close()
             self.conn.commit()
         except db.DatabaseError as err:

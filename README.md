@@ -17,7 +17,6 @@ Following databases are currently supported: `Oracle`
 
     work on the current change
        add        Add a DDL change to the index
-       reset      Reset current HEAD to the specified state
 
     examine the history and state
        log        Show commit logs
@@ -191,6 +190,25 @@ A sample output adding all changes:
     +++ b/PEOPLE_IDX01.sql
     @@ -0,0 +1 @@
     +CREATE INDEX PEOPLE_IDX01 ON PEOPLE (first_name);
+
+### git db tag
+`git db tag` tags a given commit:
+
+    gvenzl-mac:schema1 gvenzl$ git db commit -m "My first commit"
+    [master (root-commit) 9b5c128] My first commit
+     2 files changed, 4 insertions(+)
+     create mode 100644 PEOPLE.sql
+     create mode 100644 PEOPLE_IDX01.sql
+    gvenzl-mac:schema1 gvenzl$ git db tag "v1" 9b5c128
+    
+`git db tag` supports abbreviated and full commit ids.
+If you pass on the 7 characters short commit id, `git db tag` will
+tag every change that has a commit that starts with these 7 characters.  
+If you pass on the full 40 characters commit id, `git db tag` will
+tag every change with that exact commit id.  
+`git db tag` will not perform a `git tag` operation.
+If the user desires to tag the file objects in `git` as well,
+he or she will have to run `git tag` manually.
 
 ### git db deinit
 `git db deinit` will remove the change tracking from the databases. The local git repository will remain intact:
