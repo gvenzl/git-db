@@ -21,9 +21,10 @@
 #
 
 
-import unittest
-import shutil
 import os
+import shutil
+import unittest
+
 import git_db_configuration as c
 
 creds = {
@@ -36,7 +37,7 @@ creds = {
 }
 
 
-class GitDBConfigurationTests(unittest.TestCase):
+class GitDBConfigurationTestCase(unittest.TestCase):
     def setUp(self):
         os.mkdir(".git")
         os.mkdir(".git/git-db")

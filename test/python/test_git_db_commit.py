@@ -30,7 +30,7 @@ import test_oracle
 import test_utils
 
 
-class GitDBCommitCase(unittest.TestCase):
+class GitDBCommitTestCase(unittest.TestCase):
 
     system_user = "system"
     system_password = "LetsDocker"
