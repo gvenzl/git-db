@@ -98,7 +98,10 @@ class Database:
             cur.close()
 
     def get_uncommitted_changes(self):
-        return self._get_changes("""SELECT tag, TO_CHAR(change_tms,'YYYY-MM-DD HH24:MI:SS') AS CHANGE_TMS,
+        """Returns all uncommitted changes.
+        The return format has to be a list of tuples, usually the result from the database query
+        """
+        return self._get_changes("""SELECT TO_CHAR(change_tms,'YYYY-MM-DD HH24:MI:SS') AS CHANGE_TMS,
                                            change_user, object_name, object_type, change
                                       FROM GITDB_CHANGES
                                         WHERE COMMIT_ID IS NULL
@@ -106,7 +109,9 @@ class Database:
                                  )
 
     def get_added_changes(self):
-        return self._get_changes("""SELECT tag, TO_CHAR(change_tms,'YYYY-MM-DD HH24:MI:SS') AS CHANGE_TMS,
+        """Returns all added changes.
+        The return format has to be a list of tuples, usually the result from a database query"""
+        return self._get_changes("""SELECT TO_CHAR(change_tms,'YYYY-MM-DD HH24:MI:SS') AS CHANGE_TMS,
                                            change_user, object_name, object_type, change
                                       FROM GITDB_CHANGES
                                         WHERE commit_id=:1
