@@ -29,6 +29,7 @@ import test_utils as u
 
 
 class GitDbInitTestCase(unittest.TestCase):
+
     def test_git_db_init(self):
         """Test initialization of repository"""
         self.assertEqual(0, init.run(["--user", u.creds["test_user"], "--password", u.creds["test_pwd"],

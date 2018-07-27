@@ -29,6 +29,7 @@ import test_utils as u
 
 
 class GitDbDeInitTestCase(unittest.TestCase):
+
     def test_git_db_deinit_not_file_system(self):
         """Test de-initialization of database repository only."""
         self.assertEqual(0, init.run(["--user", u.creds["test_user"], "--password", u.creds["test_pwd"],
