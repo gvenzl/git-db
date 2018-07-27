@@ -101,7 +101,7 @@ class Database:
         """Returns all uncommitted changes.
         The return format has to be a list of tuples, usually the result from the database query
         """
-        return self._get_changes("""SELECT TO_CHAR(change_tms,'YYYY-MM-DD HH24:MI:SS') AS CHANGE_TMS,
+        return self._get_changes("""SELECT TO_CHAR(change_tms,'YYYY-MM-DD HH24:MI:SS') AS change_tms,
                                            change_user, object_name, object_type, change
                                       FROM GITDB_CHANGE_LOG
                                         WHERE COMMIT_ID IS NULL
@@ -111,13 +111,30 @@ class Database:
     def get_added_changes(self):
         """Returns all added changes.
         The return format has to be a list of tuples, usually the result from a database query"""
-        return self._get_changes("""SELECT TO_CHAR(change_tms,'YYYY-MM-DD HH24:MI:SS') AS CHANGE_TMS,
+        return self._get_changes("""SELECT TO_CHAR(change_tms,'YYYY-MM-DD HH24:MI:SS') AS change_tms,
                                            change_user, object_name, object_type, change
                                       FROM GITDB_CHANGE_LOG
                                         WHERE commit_id=:1
                                           ORDER BY object_owner, object_name""",
                                  (self._new_commit_id,)
                                  )
+
+    def get_commit_log(self, verbose):
+        """Returns the commit log.
+        The return format has to be a list of tuples, usually the result of a database query"""
+
+        if verbose:
+            stmt = """SELECT commit_id AS id, TO_CHAR(change_tms,'YYYY-MM-DD HH24:MI:SS') AS change_tms,
+                             change_user, tag, object_name, object_type, change
+                        FROM GITDB_CHANGE_LOG
+                          ORDER BY change_tms DESC"""
+        else:
+            stmt = """SELECT SUBSTR(commit_id,1,7) AS id, TO_CHAR(change_tms,'YYYY-MM-DD HH24:MI:SS') AS change_tms,
+                             change_user, object_name, change
+                        FROM GITDB_CHANGE_LOG
+                          ORDER BY change_tms DESC"""
+
+        return self._get_changes(stmt)
 
     def _get_changes(self, stmt, params=()):
         # Output Handler for CLOBs

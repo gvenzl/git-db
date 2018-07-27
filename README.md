@@ -194,12 +194,29 @@ A sample output adding all changes:
 ### git db tag
 `git db tag` tags a given commit:
 
-    gvenzl-mac:schema1 gvenzl$ git db commit -m "My first commit"
-    [master (root-commit) 9b5c128] My first commit
-     2 files changed, 4 insertions(+)
+    gvenzl-mac:schema1 gvenzl$ git db commit -m "First commit" --signoff
+    [master (root-commit) 64d3ae1] First commit
+     2 files changed, 2 insertions(+)
      create mode 100644 PEOPLE.sql
      create mode 100644 PEOPLE_IDX01.sql
-    gvenzl-mac:schema1 gvenzl$ git db tag "v1" 9b5c128
+    
+    gvenzl-mac:schema1 gvenzl$ git db log
+    +---------+---------------------+-------------+--------------+----------------------------------------------------------------------------------+
+    | ID      | CHANGE_TMS          | CHANGE_USER | OBJECT_NAME  | CHANGE                                                                           |
+    +---------+---------------------+-------------+--------------+----------------------------------------------------------------------------------+
+    | 64d3ae1 | 2018-07-27 03:21:56 | TEST        | PEOPLE_IDX01 | CREATE INDEX PEOPLE_IDX01 ON PEOPLE (first_name);                                |
+    | 64d3ae1 | 2018-07-27 03:21:54 | TEST        | PEOPLE       | CREATE TABLE PEOPLE (first_name VARCHAR2(25), last_name VARCHAR2(25), dob DATE); |
+    +---------+---------------------+-------------+--------------+----------------------------------------------------------------------------------+
+    
+    gvenzl-mac:schema1 gvenzl$ git db tag "v1" 64d3ae1
+    
+    gvenzl-mac:schema1 gvenzl$ git db log -v
+    +------------------------------------------+---------------------+-------------+-----+--------------+-------------+----------------------------------------------------------------------------------+
+    | ID                                       | CHANGE_TMS          | CHANGE_USER | TAG | OBJECT_NAME  | OBJECT_TYPE | CHANGE                                                                           |
+    +------------------------------------------+---------------------+-------------+-----+--------------+-------------+----------------------------------------------------------------------------------+
+    | 64d3ae1e92a39f42e60a317cf746520d5fd0ef99 | 2018-07-27 03:21:56 | TEST        | v1  | PEOPLE_IDX01 | INDEX       | CREATE INDEX PEOPLE_IDX01 ON PEOPLE (first_name);                                |
+    | 64d3ae1e92a39f42e60a317cf746520d5fd0ef99 | 2018-07-27 03:21:54 | TEST        | v1  | PEOPLE       | TABLE       | CREATE TABLE PEOPLE (first_name VARCHAR2(25), last_name VARCHAR2(25), dob DATE); |
+    +------------------------------------------+---------------------+-------------+-----+--------------+-------------+----------------------------------------------------------------------------------+
     
 `git db tag` supports abbreviated and full commit ids.
 If you pass on the 7 characters short commit id, `git db tag` will
@@ -209,6 +226,27 @@ tag every change with that exact commit id.
 `git db tag` will not perform a `git tag` operation.
 If the user desires to tag the file objects in `git` as well,
 he or she will have to run `git tag` manually.
+
+### git db log
+`git db log` shows the commit log.
+
+    gvenzl-mac:schema1 gvenzl$ git db log
+    +---------+---------------------+-------------+--------------+----------------------------------------------------------------------------------+
+    | ID      | CHANGE_TMS          | CHANGE_USER | OBJECT_NAME  | CHANGE                                                                           |
+    +---------+---------------------+-------------+--------------+----------------------------------------------------------------------------------+
+    | 64d3ae1 | 2018-07-27 03:21:56 | TEST        | PEOPLE_IDX01 | CREATE INDEX PEOPLE_IDX01 ON PEOPLE (first_name);                                |
+    | 64d3ae1 | 2018-07-27 03:21:54 | TEST        | PEOPLE       | CREATE TABLE PEOPLE (first_name VARCHAR2(25), last_name VARCHAR2(25), dob DATE); |
+    +---------+---------------------+-------------+--------------+----------------------------------------------------------------------------------+
+    
+The `-v | --verbose` option will print verbose output, such as the full commit id and tags:
+    
+    gvenzl-mac:schema1 gvenzl$ git db log -v
+    +------------------------------------------+---------------------+-------------+-----+--------------+-------------+----------------------------------------------------------------------------------+
+    | ID                                       | CHANGE_TMS          | CHANGE_USER | TAG | OBJECT_NAME  | OBJECT_TYPE | CHANGE                                                                           |
+    +------------------------------------------+---------------------+-------------+-----+--------------+-------------+----------------------------------------------------------------------------------+
+    | 64d3ae1e92a39f42e60a317cf746520d5fd0ef99 | 2018-07-27 03:21:56 | TEST        |     | PEOPLE_IDX01 | INDEX       | CREATE INDEX PEOPLE_IDX01 ON PEOPLE (first_name);                                |
+    | 64d3ae1e92a39f42e60a317cf746520d5fd0ef99 | 2018-07-27 03:21:54 | TEST        |     | PEOPLE       | TABLE       | CREATE TABLE PEOPLE (first_name VARCHAR2(25), last_name VARCHAR2(25), dob DATE); |
+    +------------------------------------------+---------------------+-------------+-----+--------------+-------------+----------------------------------------------------------------------------------+
 
 ### git db deinit
 `git db deinit` will remove the change tracking from the databases. The local git repository will remain intact:
