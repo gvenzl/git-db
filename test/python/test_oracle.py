@@ -22,11 +22,14 @@
 
 import cx_Oracle
 
+import test_utils as u
+
 TABLE_NAME = "UNIT_TEST"
 
 
 def _connect_schema():
-    return cx_Oracle.connect("test", "test", "localhost:1521/ORCLPDB1")
+    return cx_Oracle.connect(u.creds["test_user"], u.creds["test_pwd"],
+                             u.creds["db_host"] + ":" + u.creds["db_port"] + "/" + u.creds["db_name"])
 
 
 def create_schema_objects():

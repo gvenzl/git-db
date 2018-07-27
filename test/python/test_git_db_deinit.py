@@ -20,25 +20,29 @@
 # limitations under the License.
 #
 
-import git_db_init as init
-import git_db_deinit as deinit
 import os
 import unittest
+
+import git_db_deinit as deinit
+import git_db_init as init
+import test_utils as u
 
 
 class GitDbDeInitTestCase(unittest.TestCase):
     def test_git_db_deinit_not_file_system(self):
         """Test de-initialization of database repository only."""
-        self.assertEqual(0, init.run(["--user", "test", "--password", "test",
-                                      "--host", "localhost", "--port", "1521", "--dbname", "ORCLPDB1"]))
+        self.assertEqual(0, init.run(["--user", u.creds["test_user"], "--password", u.creds["test_pwd"],
+                                      "--host", u.creds["db_host"], "--port", u.creds["db_port"], "--dbname",
+                                      u.creds["db_name"]]))
         self.assertTrue(os.path.exists(".git"))
         self.assertEqual(0, deinit.run(""))
         self.assertTrue(os.path.exists(".git"))
 
     def test_git_db_deinit_incl_file_system(self):
         """Test de-initialization of database repository only."""
-        self.assertEqual(0, init.run(["--user", "test", "--password", "test",
-                                      "--host", "localhost", "--port", "1521", "--dbname", "ORCLPDB1"]))
+        self.assertEqual(0, init.run(["--user", u.creds["test_user"], "--password", u.creds["test_pwd"],
+                                      "--host", u.creds["db_host"], "--port", u.creds["db_port"], "--dbname",
+                                      u.creds["db_name"]]))
         self.assertTrue(os.path.exists(".git"))
         self.assertEqual(0, deinit.run(["--all"]))
         self.assertFalse(os.path.exists(".git"))

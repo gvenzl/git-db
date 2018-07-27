@@ -26,18 +26,11 @@ import shutil
 import unittest
 
 import git_db_configuration as c
-
-creds = {
-    "user": "unittest",
-    "password": "unittest",
-    "host": "localhost",
-    "port": "1521",
-    "dbname": "MYDB",
-    "role": "MYROLE"
-}
+import test_utils as u
 
 
 class GitDBConfigurationTestCase(unittest.TestCase):
+
     def setUp(self):
         os.mkdir(".git")
         os.mkdir(".git/git-db")
@@ -45,15 +38,16 @@ class GitDBConfigurationTestCase(unittest.TestCase):
     def test_store_config(self):
         """c.store_credentials should create a new file .git/git-db/git-db.conf"""
         c.store_config(c.build_config(c.Database.ORACLE,
-                                      creds["user"], creds["password"], creds["host"],
-                                      creds["port"], creds["dbname"], creds["role"]))
+                                      u.creds["test_user"], u.creds["test_pwd"], u.creds["db_host"],
+                                      u.creds["db_port"], u.creds["db_name"], u.creds["role"]))
         self.assertTrue(os.path.exists(".git/git-db/git-db.conf"))
 
     def test_store_config_no_role(self):
         """store_credentials should store credentials without role and read it back successfully"""
+        # These have to match the layout in .git/git-db/git-db.conf
         creds_no_role = {
-                    "user": "unittest",
-                    "password": "unittest",
+                    "user": "mytestuser",
+                    "password": "mytestpassword",
                     "host": "localhost",
                     "port": "1521",
                     "dbname": "MYDB",
@@ -67,19 +61,29 @@ class GitDBConfigurationTestCase(unittest.TestCase):
     def test_get_tracking_schema(self):
         """get_tracking should retrieve Tracking.SCHEMA"""
         c.store_config(c.build_config(c.Database.ORACLE,
-                                      creds["user"], creds["password"], creds["host"],
-                                      creds["port"], creds["dbname"], creds["role"], False))
+                                      u.creds["test_user"], u.creds["test_pwd"], u.creds["db_host"],
+                                      u.creds["db_port"], u.creds["db_name"], u.creds["role"], False))
         self.assertEqual(c.get_tracking(), c.Tracking.SCHEMA)
 
     def test_get_tracking_database(self):
         """get_tracking should retrieve Tracking.DATABASE"""
         c.store_config(c.build_config(c.Database.ORACLE,
-                                      creds["user"], creds["password"], creds["host"],
-                                      creds["port"], creds["dbname"], creds["role"], True))
+                                      u.creds["test_user"], u.creds["test_pwd"], u.creds["db_host"],
+                                      u.creds["db_port"], u.creds["db_name"], u.creds["role"], True))
         self.assertEqual(c.get_tracking(), c.Tracking.DATABASE)
 
     def test_retrieve_credentials(self):
         """get_config should retrieve correct credentials"""
+
+        # These have to match the layout in .git/git-db/git-db.conf
+        creds = {
+            "user": "SYS",
+            "password": "mytestpassword",
+            "host": "localhost",
+            "port": "1521",
+            "dbname": "MYDB",
+            "role": "SYSDBA"
+        }
         c.store_config(c.build_config(c.Database.ORACLE,
                                       creds["user"], creds["password"], creds["host"],
                                       creds["port"], creds["dbname"], creds["role"], True))

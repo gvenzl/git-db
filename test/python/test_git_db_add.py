@@ -22,29 +22,21 @@
 
 import unittest
 
-import test_utils
-
 import git_db_add
 import git_db_deinit
 import git_db_init
+import test_utils as u
 
 
 class GitDbAddTestCase(unittest.TestCase):
-
-    system_user = "system"
-    system_password = "LetsDocker"
-    test_user = "test"
-    test_password = "test"
-    db_host = "localhost"
-    db_port = "1521"
-    db_name = "ORCLPDB1"
 
     def test_all_schema_changes(self):
         print()
         print("TEST: All schema changes")
         print()
-        self.assertEqual(0, git_db_init.run(["--user", self.test_user, "--password", self.test_password,
-                                             "--host", self.db_host, "--port", self.db_port, "--dbname", self.db_name]))
+        self.assertEqual(0, git_db_init.run(["--user", u.creds["test_user"], "--password", u.creds["test_pwd"],
+                                             "--host", u.creds["db_host"], "--port", u.creds["db_port"],
+                                             "--dbname", u.creds["db_name"]]))
         self.assertEqual(0, git_db_add.run(["."]))
 
     def test_all_database_changes(self):
@@ -52,8 +44,9 @@ class GitDbAddTestCase(unittest.TestCase):
         print("TEST: All database changes")
         print()
         self.assertEqual(0,
-                         git_db_init.run(["--user", self.system_user, "--password", self.system_password, "--all",
-                                          "--host", self.db_host, "--port", self.db_port, "--dbname", self.db_name]))
+                         git_db_init.run(["--user", u.creds["system_user"], "--password", u.creds["system_password"],
+                                          "--all", "--host", u.creds["db_host"], "--port", u.creds["db_port"],
+                                          "--dbname",  u.creds["db_name"]]))
         self.assertEqual(0, git_db_add.run(["."]))
 
     def test_user_changes(self):
@@ -61,8 +54,9 @@ class GitDbAddTestCase(unittest.TestCase):
         print("TEST: User changes")
         print()
         self.assertEqual(0,
-                         git_db_init.run(["--user", self.system_user, "--password", self.system_password, "--all",
-                                          "--host", self.db_host, "--port", self.db_port, "--dbname", self.db_name]))
+                         git_db_init.run(["--user", u.creds["system_user"], "--password", u.creds["system_password"],
+                                          "--all", "--host", u.creds["db_host"], "--port", u.creds["db_port"],
+                                          "--dbname", u.creds["db_name"]]))
 
         self.assertEqual(git_db_add.run(["--user", "TEST"]), 0)
 
@@ -71,8 +65,9 @@ class GitDbAddTestCase(unittest.TestCase):
         print("TEST: Owner changes")
         print()
         self.assertEqual(0,
-                         git_db_init.run(["--user", self.system_user, "--password", self.system_password, "--all",
-                                          "--host", self.db_host, "--port", self.db_port, "--dbname", self.db_name]))
+                         git_db_init.run(["--user", u.creds["system_user"], "--password", u.creds["system_password"],
+                                          "--all", "--host", u.creds["db_host"], "--port", u.creds["db_port"],
+                                          "--dbname", u.creds["db_name"]]))
 
         self.assertEqual(git_db_add.run(["--owner", "TEST"]), 0)
 
@@ -81,14 +76,15 @@ class GitDbAddTestCase(unittest.TestCase):
         print("TEST: Object changes")
         print()
         self.assertEqual(0,
-                         git_db_init.run(["--user", self.system_user, "--password", self.system_password, "--all",
-                                          "--host", self.db_host, "--port", self.db_port, "--dbname", self.db_name]))
+                         git_db_init.run(["--user", u.creds["system_user"], "--password", u.creds["system_password"],
+                                          "--all", "--host", u.creds["db_host"], "--port", u.creds["db_port"],
+                                          "--dbname", u.creds["db_name"]]))
 
         self.assertEqual(git_db_add.run(["--object", "NEWTABLE"]), 0)
 
     def tearDown(self):
         git_db_deinit.run(["--all"])
-        test_utils.cleanup()
+        u.cleanup()
 
 
 if __name__ == '__main__':

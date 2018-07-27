@@ -30,26 +30,19 @@ import git_db_init
 import git_db_tag
 import git_db_utils
 import test_oracle
-import test_utils
+import test_utils as u
 
 
 class GitDbTagTestCase(unittest.TestCase):
-    system_user = "system"
-    system_password = "LetsDocker"
-    test_user = "test"
-    test_password = "test"
-    db_host = "localhost"
-    db_port = "1521"
-    db_name = "ORCLPDB1"
 
     def test_tag_commit(self):
 
         print()
         print("TEST: Tag commit change")
         print()
-        self.assertEqual(0, git_db_init.run(["--user", self.test_user, "--password", self.test_password,
-                                             "--host", self.db_host, "--port", self.db_port, "--dbname",
-                                             self.db_name]))
+        self.assertEqual(0, git_db_init.run(["--user", u.creds["test_user"], "--password", u.creds["test_pwd"],
+                                             "--host", u.creds["db_host"], "--port", u.creds["db_port"], "--dbname",
+                                             u.creds["db_name"]]))
 
         test_oracle.create_schema_objects()
         self.assertEqual(0, git_db_add.run(["."]))
@@ -59,7 +52,7 @@ class GitDbTagTestCase(unittest.TestCase):
 
     def tearDown(self):
         git_db_deinit.run(["--all"])
-        test_utils.cleanup()
+        u.cleanup()
 
         # Remove schema objects
         test_oracle.reset_schema()

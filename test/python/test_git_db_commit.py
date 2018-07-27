@@ -27,27 +27,19 @@ import git_db_commit
 import git_db_deinit
 import git_db_init
 import test_oracle
-import test_utils
+import test_utils as u
 
 
 class GitDBCommitTestCase(unittest.TestCase):
-
-    system_user = "system"
-    system_password = "LetsDocker"
-    test_user = "test"
-    test_password = "test"
-    db_host = "localhost"
-    db_port = "1521"
-    db_name = "ORCLPDB1"
 
     def test_commit_objects(self):
 
         print()
         print("TEST: Commit all new changes")
         print()
-        self.assertEqual(0, git_db_init.run(["--user", self.test_user, "--password", self.test_password,
-                                             "--host", self.db_host, "--port", self.db_port, "--dbname",
-                                             self.db_name]))
+        self.assertEqual(0, git_db_init.run(["--user", u.creds["test_user"], "--password", u.creds["test_pwd"],
+                                             "--host", u.creds["db_host"], "--port", u.creds["db_port"], "--dbname",
+                                             u.creds["db_name"]]))
 
         test_oracle.create_schema_objects()
         self.assertEqual(0, git_db_add.run(["."]))
@@ -55,7 +47,7 @@ class GitDBCommitTestCase(unittest.TestCase):
 
     def tearDown(self):
         git_db_deinit.run(["--all"])
-        test_utils.cleanup()
+        u.cleanup()
 
         # Remove schema objects
         test_oracle.reset_schema()

@@ -26,12 +26,14 @@ import unittest
 import git_db_deinit
 import git_db_init
 import git_db_status
+import test_utils as u
 
 
 class GitDbStatusTestCase(unittest.TestCase):
     def test_git_db_status(self):
-        self.assertEqual(0, git_db_init.run(["--user", "test", "--password", "test",
-                                             "--host", "localhost", "--port", "1521", "--dbname", "ORCLPDB1"]))
+        self.assertEqual(0, git_db_init.run(["--user", u.creds["test_user"], "--password", u.creds["test_pwd"],
+                                             "--host", u.creds["db_host"], "--port", u.creds["db_port"], "--dbname",
+                                             u.creds["db_name"]]))
         self.assertEqual(0, git_db_status.run())
         self.assertEqual(0, git_db_deinit.run(["--all"]))
 

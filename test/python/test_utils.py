@@ -24,6 +24,17 @@ import glob
 import os
 import shutil
 
+creds = {
+    "system_user": "system",
+    "system_password": "LetsDocker",
+    "test_user": "unit_test",
+    "test_pwd": "unittest",
+    "db_host": "localhost",
+    "db_port": "1521",
+    "db_name": "ORCLPDB1",
+    "role": "sysdba"
+}
+
 
 def cleanup():
     # Delete all .sql files
