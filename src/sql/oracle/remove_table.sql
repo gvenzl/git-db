@@ -19,5 +19,5 @@
 -- limitations under the License.
 --
 
-DROP TABLE GITDB_CHANGES;
+DROP TABLE GITDB_CHANGE_LOG;
 /

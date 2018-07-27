@@ -103,7 +103,7 @@ class Database:
         """
         return self._get_changes("""SELECT TO_CHAR(change_tms,'YYYY-MM-DD HH24:MI:SS') AS CHANGE_TMS,
                                            change_user, object_name, object_type, change
-                                      FROM GITDB_CHANGES
+                                      FROM GITDB_CHANGE_LOG
                                         WHERE COMMIT_ID IS NULL
                                           ORDER BY CHANGE_TMS"""
                                  )
@@ -113,7 +113,7 @@ class Database:
         The return format has to be a list of tuples, usually the result from a database query"""
         return self._get_changes("""SELECT TO_CHAR(change_tms,'YYYY-MM-DD HH24:MI:SS') AS CHANGE_TMS,
                                            change_user, object_name, object_type, change
-                                      FROM GITDB_CHANGES
+                                      FROM GITDB_CHANGE_LOG
                                         WHERE commit_id=:1
                                           ORDER BY object_owner, object_name""",
                                  (self._new_commit_id,)
@@ -137,7 +137,7 @@ class Database:
 
     def add_changes(self, name, user, owner, db_object):
         try:
-            stmt = "UPDATE GITDB_CHANGES SET commit_id=:1 WHERE commit_id IS NULL"
+            stmt = "UPDATE GITDB_CHANGE_LOG SET commit_id=:1 WHERE commit_id IS NULL"
             if name == "." and (db_object is False and owner is False and user is False):
                 pass
             elif user is True:
@@ -171,7 +171,7 @@ class Database:
         self.conn.outputtypehandler = output_type_handler
         cur = self.conn.cursor()
         cur.execute("""SELECT object_owner, object_name, change
-                         FROM GITDB_CHANGES
+                         FROM GITDB_CHANGE_LOG
                            WHERE commit_id=:1
                              ORDER BY object_owner, object_name""", (self._new_commit_id,))
         result = cur.fetchall()
@@ -181,7 +181,7 @@ class Database:
     def set_commit_id(self, commit_id):
         try:
             cur = self.conn.cursor()
-            cur.execute("""UPDATE GITDB_CHANGES
+            cur.execute("""UPDATE GITDB_CHANGE_LOG
                              SET commit_id=:1 WHERE commit_id=:2""", (commit_id, self._new_commit_id))
             cur.close()
             self.conn.commit()
@@ -193,10 +193,10 @@ class Database:
             cur = self.conn.cursor()
             # Check whether commit id is full one or abbreviated
             if len(commit_id) == 40:
-                stmt = """UPDATE GITDB_CHANGES
+                stmt = """UPDATE GITDB_CHANGE_LOG
                              SET tag=:1 WHERE commit_id=:2"""
             else:
-                stmt = """UPDATE GITDB_CHANGES
+                stmt = """UPDATE GITDB_CHANGE_LOG
                              SET tag=:1 WHERE commit_id LIKE CONCAT(:2,'%')"""
             cur.execute(stmt, (tag, commit_id))
             cur.close()

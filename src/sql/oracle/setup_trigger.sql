@@ -34,7 +34,7 @@ CREATE OR REPLACE TRIGGER GITDB_CHANGE_TRACKER
             v_stmt := v_stmt || v_stmt_part;
         END LOOP;
 
-        INSERT INTO GITDB_CHANGES
+        INSERT INTO GITDB_CHANGE_LOG
                       (CHANGE_TMS,
                        CHANGE_USER,
                        CHANGE,
