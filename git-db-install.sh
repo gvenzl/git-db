@@ -47,12 +47,55 @@ function getGitPath() {
     echo "$GIT_PATH";
 }
 
+function installGitDb {
+    echo "Installing Git DB"
+    echo "Git path: $(getGitPath)"
+    echo "Git version: $(git --version)"
+
+    checkPermissions;
+
+    if [ -d "$GITDB_DIR" -a -d "$GITDB_DIR/.git" ] ; then
+        echo "Using existing repo: $GITDB_DIR"
+    else
+        echo "Cloning repo from GitHub to $GITDB_DIR"
+        git clone "$GITDB_REPO_HOME" "$GITDB_DIR"
+    fi
+
+    install -v -d -m 0755 "$INSTALL_PREFIX/$GITDB_BIN"
+    install -v    -m 0755 "$GITDB_DIR/src/$EXEC_FILE" "$INSTALL_PREFIX"
+
+    install -v -d  -m 0755 "$INSTALL_PREFIX/$GITDB_BIN/python"
+    install -v -d  -m 0755 "$INSTALL_PREFIX/$GITDB_BIN/python/database"
+    for script_file in $SCRIPT_FILES ; do
+        install -v -m 0755 "$GITDB_DIR/src/python/$script_file" "$INSTALL_PREFIX/$GITDB_BIN/python/$script_file"
+    done
+
+    install -v -d  -m 0755 "$INSTALL_PREFIX/$GITDB_BIN/sql/$DB_TYPE"
+    for sql_file in $SQL_FILES ; do
+        install -v -m 0755 "$GITDB_DIR/src/sql/$DB_TYPE/$sql_file" "$INSTALL_PREFIX/$GITDB_BIN/sql/$DB_TYPE"
+    done
+
+    echo ""
+    echo "Git DB Installation complete!"
+    echo "Congratulations, Git DB is now ready for use."
+    echo "Don't forget to make sure that Git DB is in your \$PATH environment variable."
+    echo "Get started with 'git db help'"
+}
+
+function checkPermissions() {
+    if [ -w ${INSTALL_PREFIX} ]; then
+        echo "Installation directory ${INSTALL_PREFIX} is writable";
+    else
+        echo "ERROR: Installation directory ${INSTALL_PREFIX} is not writable!"
+        exit 1;
+    fi;
+}
 
 ########################
 ######### MAIN #########
 ########################
 
-echo "### Git DB installer ###"
+echo "############### Git DB installer ###############"
 
 case "$1" in
     uninstall)
@@ -79,36 +122,7 @@ case "$1" in
         exit
         ;;
     *)
-        echo "Installing Git DB"
-        echo "Git path: $(getGitPath)"
-        echo "Git version: $(git --version)"
-
-		if [ -d "$GITDB_DIR" -a -d "$GITDB_DIR/.git" ] ; then
-			echo "Using existing repo: $GITDB_DIR"
-		else
-			echo "Cloning repo from GitHub to $GITDB_DIR"
-			git clone "$GITDB_REPO_HOME" "$GITDB_DIR"
-		fi
-
-        install -v -d -m 0755 "$INSTALL_PREFIX/$GITDB_BIN"
-        install -v    -m 0755 "$GITDB_DIR/src/$EXEC_FILE" "$INSTALL_PREFIX"
-
-        install -v -d  -m 0755 "$INSTALL_PREFIX/$GITDB_BIN/python"
-        install -v -d  -m 0755 "$INSTALL_PREFIX/$GITDB_BIN/python/database"
-        for script_file in $SCRIPT_FILES ; do
-            install -v -m 0755 "$GITDB_DIR/src/python/$script_file" "$INSTALL_PREFIX/$GITDB_BIN/python/$script_file"
-        done
-
-        install -v -d  -m 0755 "$INSTALL_PREFIX/$GITDB_BIN/sql/$DB_TYPE"
-        for sql_file in $SQL_FILES ; do
-            install -v -m 0755 "$GITDB_DIR/src/sql/$DB_TYPE/$sql_file" "$INSTALL_PREFIX/$GITDB_BIN/sql/$DB_TYPE"
-        done
-
-        echo ""
-        echo "Git DB Installation complete!"
-        echo "Congratulations, Git DB is now ready for use."
-        echo "Don't forget to make sure that Git DB is in your \$PATH environment variable."
-        echo "Get started with 'git db help'"
+        installGitDb;
         exit
         ;;
 esac
