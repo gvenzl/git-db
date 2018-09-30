@@ -79,7 +79,14 @@ function installGitDb {
     echo "Git DB Installation complete!"
     echo "Congratulations, Git DB is now ready for use."
     echo "Don't forget to make sure that Git DB is in your \$PATH environment variable."
-    echo "Get started with 'git db help'"
+    # Check if Git Db is in the PATH
+    if [[ ":$PATH:" == *":$INSTALL_PREFIX:"* ]]; then
+        echo "Get started with 'git db help'"
+    else
+        echo "Get started with 'export PATH=\$PATH:${INSTALL_PREFIX}'"
+        echo "and 'git db help'"
+    fi;
+
 }
 
 function checkPermissions() {
