@@ -71,7 +71,7 @@ case "$1" in
         fi
         exit
         ;;
-    help)
+    help | -h | --help)
         echo "Usage: [environment] git-db-install.sh [install|uninstall]"
         echo "Environment:"
         echo "   INSTALL_PREFIX=$INSTALL_PREFIX"
