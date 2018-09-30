@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 #
 # Since: June, 2018
 # Author: gvenzl
@@ -20,10 +20,11 @@
 # limitations under the License.
 #
 
-import sys
-import shutil
-import database
 import argparse
+import shutil
+import sys
+
+import database
 import git_db_configuration as config
 
 

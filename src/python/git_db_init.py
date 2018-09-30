@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 #
 # Since: May, 2018
 # Author: gvenzl
@@ -23,6 +23,7 @@
 import argparse
 import os
 import sys
+
 import database as db
 import git_db_configuration as config
 import git_db_utils as utils

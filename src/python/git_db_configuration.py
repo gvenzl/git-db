@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 #
 # Since: June, 2018
 # Author: gvenzl
@@ -20,9 +20,9 @@
 # limitations under the License.
 #
 
-import os
-import json
 import base64
+import json
+import os
 from enum import Enum
 
 CONFIG_DIR = "./.git/git-db"
