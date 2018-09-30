@@ -27,8 +27,11 @@ def get_database(config):
     dbtype = c.Database(config[c.DBTYPE])
     credentials = config[c.CREDENTIALS]
     if dbtype == c.Database.ORACLE:
-        import database.oracle
-        return oracle.Database(credentials["user"], credentials["password"], credentials["host"],
-                               credentials["port"], credentials["dbname"], credentials["role"])
+        try:
+            import database.oracle
+            return oracle.Database(credentials["user"], credentials["password"], credentials["host"],
+                                   credentials["port"], credentials["dbname"], credentials["role"])
+        except ModuleNotFoundError as err:
+            raise ConnectionError("Database driver module is not installed: {0}".format(str(err)))
     else:
         raise NotImplementedError("Database type {0} is not supported by Git DB.".format(dbtype))
