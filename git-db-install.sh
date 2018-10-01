@@ -35,23 +35,53 @@ SCRIPT_FILES="database/__init__.py database/oracle.py git_db_add.py git_db_commi
 DB_TYPE="oracle"
 SQL_FILES="remove_table.sql remove_trigger.sql setup_table.sql setup_trigger.sql"
 
-function getGitPath() {
-    GIT_PATH=$(which git)
+function checkGit() {
 
-    if [ -z "$GIT_PATH" ]; then
-        echo "git is not installed or in the PATH";
+    if [ -z "git" ]; then
+        echo "git is not installed or in the \$PATH";
         echo "Please install git first!";
         exit 1;
     fi;
 
-    echo "$GIT_PATH";
+    echo "Git version: $(git --version)"
+
+}
+
+function checkPythonVersion() {
+
+    if [ -z "python3" ]; then
+        echo "Python 3 is not installed or not in the \$PATH";
+        echo "Please install Python 3.5+ first!"
+        exit 1;
+    fi;
+
+    PYTHON_VERSION_ORG=$(python3 -V)
+    PYTHON_VERSION=${PYTHON_VERSION_ORG//Python /}
+    PYTHON_VERSION=${PYTHON_VERSION//./}
+
+    if [ ${PYTHON_VERSION} -lt "350" ]; then
+        echo "Python 3 version found is too low for Git Db"
+        echo "Please install at least Python 3.5.0 or newer"
+        exit 1;
+    fi;
+
+    echo "Python version: ${PYTHON_VERSION_ORG}"
+}
+
+function checkPermissions() {
+    if [ -w ${INSTALL_PREFIX} ]; then
+        echo "Installation directory ${INSTALL_PREFIX} is writable";
+    else
+        echo "ERROR: Installation directory ${INSTALL_PREFIX} is not writable!"
+        exit 1;
+    fi;
 }
 
 function installGitDb {
     echo "Installing Git DB"
-    echo "Git path: $(getGitPath)"
-    echo "Git version: $(git --version)"
 
+    checkGit;
+    checkPythonVersion;
     checkPermissions;
 
     if [ -d "$GITDB_DIR" -a -d "$GITDB_DIR/.git" ] ; then
@@ -75,27 +105,6 @@ function installGitDb {
         install -v -m 0755 "$GITDB_DIR/src/sql/$DB_TYPE/$sql_file" "$INSTALL_PREFIX/$GITDB_BIN/sql/$DB_TYPE"
     done
 
-    echo ""
-    echo "Git DB Installation complete!"
-    echo "Congratulations, Git DB is now ready for use."
-    echo "Don't forget to make sure that Git DB is in your \$PATH environment variable."
-    # Check if Git Db is in the PATH
-    if [[ ":$PATH:" == *":$INSTALL_PREFIX:"* ]]; then
-        echo "Get started with 'git db help'"
-    else
-        echo "Get started with 'export PATH=\$PATH:${INSTALL_PREFIX}'"
-        echo "and 'git db help'"
-    fi;
-
-}
-
-function checkPermissions() {
-    if [ -w ${INSTALL_PREFIX} ]; then
-        echo "Installation directory ${INSTALL_PREFIX} is writable";
-    else
-        echo "ERROR: Installation directory ${INSTALL_PREFIX} is not writable!"
-        exit 1;
-    fi;
 }
 
 ########################
@@ -130,6 +139,19 @@ case "$1" in
         ;;
     *)
         installGitDb;
+
+        echo ""
+        echo "Git DB Installation complete!"
+        echo "Congratulations, Git DB is now ready for use."
+        echo "Don't forget to make sure that Git DB is in your \$PATH environment variable."
+        # Check if Git Db is in the PATH
+        if [[ ":$PATH:" == *":$INSTALL_PREFIX:"* ]]; then
+            echo "Get started with 'git db help'"
+        else
+            echo "Get started with 'export PATH=\$PATH:${INSTALL_PREFIX}'"
+            echo "and 'git db help'"
+        fi;
+
         exit
         ;;
 esac
