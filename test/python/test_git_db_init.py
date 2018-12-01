@@ -52,6 +52,8 @@ class GitDbInitTestCase(unittest.TestCase):
         self.assertEqual(1, init.run(["--user", "does", "--password", "not",
                                       "--host", "localhost", "--port", "1521", "--dbname", "exist"]))
 
+        # No cleanup necessary as init hasn't created the git repo
+
 
 if __name__ == '__main__':
     unittest.main()
