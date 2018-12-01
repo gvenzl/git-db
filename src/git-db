@@ -50,6 +50,7 @@ function usage() {
 
 function version() {
     echo "Git DB git plugin $VERSION";
+    echo "Copyright (c) 2018-2018 Gerald Venzl";
 }
 
 function main() {
