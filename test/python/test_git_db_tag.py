@@ -50,6 +50,22 @@ class GitDbTagTestCase(unittest.TestCase):
         git_commit_id = git_db_utils.get_git_commit_id()
         self.assertEqual(0, git_db_tag.run(["test tag", git_commit_id]))
 
+    def test_tag_message(self):
+
+        tag_message = "My test tag"
+
+        print()
+        print("TEST: Tag commit message")
+        print()
+        self.assertEqual(0, git_db_init.run(["--user", u.creds["test_user"], "--password", u.creds["test_pwd"],
+                                             "--host", u.creds["db_host"], "--port", u.creds["db_port"], "--dbname",
+                                             u.creds["db_name"]]))
+        test_oracle.create_schema_objects()
+        self.assertEqual(0, git_db_add.run(["."]))
+        self.assertEqual(0, git_db_commit.run(["-m", "unit test message"]))
+        git_commit_id = git_db_utils.get_git_commit_id()
+        self.assertEqual(0, git_db_tag.run([tag_message, git_commit_id]))
+
     def tearDown(self):
         git_db_deinit.run(["--all"])
         u.cleanup()
