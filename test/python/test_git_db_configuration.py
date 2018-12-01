@@ -37,6 +37,10 @@ class GitDBConfigurationTestCase(unittest.TestCase):
 
     def test_store_config(self):
         """c.store_credentials should create a new file .git/git-db/git-db.conf"""
+        print()
+        print("TEST: Store configuration")
+        print()
+
         c.store_config(c.build_config(c.Database.ORACLE,
                                       u.creds["test_user"], u.creds["test_pwd"], u.creds["db_host"],
                                       u.creds["db_port"], u.creds["db_name"], u.creds["role"]))
@@ -60,6 +64,10 @@ class GitDBConfigurationTestCase(unittest.TestCase):
 
     def test_get_tracking_schema(self):
         """get_tracking should retrieve Tracking.SCHEMA"""
+        print()
+        print("TEST: Get tracking for schema")
+        print()
+
         c.store_config(c.build_config(c.Database.ORACLE,
                                       u.creds["test_user"], u.creds["test_pwd"], u.creds["db_host"],
                                       u.creds["db_port"], u.creds["db_name"], u.creds["role"], False))
@@ -67,6 +75,10 @@ class GitDBConfigurationTestCase(unittest.TestCase):
 
     def test_get_tracking_database(self):
         """get_tracking should retrieve Tracking.DATABASE"""
+        print()
+        print("TEST: Get tracking for database")
+        print()
+
         c.store_config(c.build_config(c.Database.ORACLE,
                                       u.creds["test_user"], u.creds["test_pwd"], u.creds["db_host"],
                                       u.creds["db_port"], u.creds["db_name"], u.creds["role"], True))
@@ -74,6 +86,9 @@ class GitDBConfigurationTestCase(unittest.TestCase):
 
     def test_retrieve_credentials(self):
         """get_config should retrieve correct credentials"""
+        print()
+        print("TEST: Retrieve credentials")
+        print()
 
         # These have to match the layout in .git/git-db/git-db.conf
         creds = {

@@ -31,14 +31,22 @@ import test_utils as u
 class GitDbInitTestCase(unittest.TestCase):
 
     def test_git_db_init(self):
-        """Test initialization of repository"""
+        """Test initialization of repository."""
+        print()
+        print("TEST: Initialization of repository")
+        print()
+
         self.assertEqual(0, init.run(["--user", u.creds["test_user"], "--password", u.creds["test_pwd"],
                                       "--host", u.creds["db_host"], "--port", u.creds["db_port"], "--dbname",
                                       u.creds["db_name"]]))
         self.assertEqual(0, git_db_deinit.run(["--all"]))
 
     def test_git_db_init_already_existing_repo(self):
-        """Test reinitialization of a repository"""
+        """Test reinitialization of a repository."""
+        print()
+        print("TEST: Re-initalization of repository")
+        print()
+
         self.assertEqual(0, init.run(["--user", u.creds["test_user"], "--password", u.creds["test_pwd"],
                                       "--host", u.creds["db_host"], "--port", u.creds["db_port"], "--dbname",
                                       u.creds["db_name"]]))
@@ -48,7 +56,11 @@ class GitDbInitTestCase(unittest.TestCase):
         self.assertEqual(0, git_db_deinit.run(["--all"]))
 
     def test_negative_init_database_not_running(self):
-        """Negative test of not running database"""
+        """Negative test of not running database."""
+        print()
+        print("TEST: Negative - database not running")
+        print()
+
         self.assertEqual(1, init.run(["--user", "does", "--password", "not",
                                       "--host", "localhost", "--port", "1521", "--dbname", "exist"]))
 

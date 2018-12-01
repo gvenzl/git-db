@@ -32,6 +32,10 @@ class GitDbDeInitTestCase(unittest.TestCase):
 
     def test_git_db_deinit_not_file_system(self):
         """Test de-initialization of database repository only."""
+        print()
+        print("TEST: De-initialize database repository only")
+        print()
+
         self.assertEqual(0, init.run(["--user", u.creds["test_user"], "--password", u.creds["test_pwd"],
                                       "--host", u.creds["db_host"], "--port", u.creds["db_port"], "--dbname",
                                       u.creds["db_name"]]))
@@ -40,7 +44,11 @@ class GitDbDeInitTestCase(unittest.TestCase):
         self.assertTrue(os.path.exists(".git"))
 
     def test_git_db_deinit_incl_file_system(self):
-        """Test de-initialization of database repository only."""
+        """Test de-initialization of database repository and filesystem."""
+        print()
+        print("TEST: De-initialize database and filesystem")
+        print()
+
         self.assertEqual(0, init.run(["--user", u.creds["test_user"], "--password", u.creds["test_pwd"],
                                       "--host", u.creds["db_host"], "--port", u.creds["db_port"], "--dbname",
                                       u.creds["db_name"]]))

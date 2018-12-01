@@ -34,6 +34,7 @@ class GitDbAddTestCase(unittest.TestCase):
         print()
         print("TEST: All schema changes")
         print()
+
         self.assertEqual(0, git_db_init.run(["--user", u.creds["test_user"], "--password", u.creds["test_pwd"],
                                              "--host", u.creds["db_host"], "--port", u.creds["db_port"],
                                              "--dbname", u.creds["db_name"]]))
@@ -43,6 +44,7 @@ class GitDbAddTestCase(unittest.TestCase):
         print()
         print("TEST: All database changes")
         print()
+
         self.assertEqual(0,
                          git_db_init.run(["--user", u.creds["system_user"], "--password", u.creds["system_password"],
                                           "--all", "--host", u.creds["db_host"], "--port", u.creds["db_port"],
@@ -53,6 +55,7 @@ class GitDbAddTestCase(unittest.TestCase):
         print()
         print("TEST: User changes")
         print()
+
         self.assertEqual(0,
                          git_db_init.run(["--user", u.creds["system_user"], "--password", u.creds["system_password"],
                                           "--all", "--host", u.creds["db_host"], "--port", u.creds["db_port"],
@@ -64,6 +67,7 @@ class GitDbAddTestCase(unittest.TestCase):
         print()
         print("TEST: Owner changes")
         print()
+
         self.assertEqual(0,
                          git_db_init.run(["--user", u.creds["system_user"], "--password", u.creds["system_password"],
                                           "--all", "--host", u.creds["db_host"], "--port", u.creds["db_port"],
@@ -75,6 +79,7 @@ class GitDbAddTestCase(unittest.TestCase):
         print()
         print("TEST: Object changes")
         print()
+
         self.assertEqual(0,
                          git_db_init.run(["--user", u.creds["system_user"], "--password", u.creds["system_password"],
                                           "--all", "--host", u.creds["db_host"], "--port", u.creds["db_port"],

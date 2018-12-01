@@ -33,10 +33,10 @@ import test_utils as u
 class GitDBCommitTestCase(unittest.TestCase):
 
     def test_commit_objects(self):
-
         print()
         print("TEST: Commit all new changes")
         print()
+
         self.assertEqual(0, git_db_init.run(["--user", u.creds["test_user"], "--password", u.creds["test_pwd"],
                                              "--host", u.creds["db_host"], "--port", u.creds["db_port"], "--dbname",
                                              u.creds["db_name"]]))

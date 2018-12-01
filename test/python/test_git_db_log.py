@@ -36,10 +36,10 @@ import test_utils as u
 class GitDbLogTestCase(unittest.TestCase):
 
     def test_tag_commit(self):
-
         print()
         print("TEST: Get commit log")
         print()
+
         self.assertEqual(0, git_db_init.run(["--user", u.creds["test_user"], "--password", u.creds["test_pwd"],
                                              "--host", u.creds["db_host"], "--port", u.creds["db_port"],
                                              "--dbname", u.creds["db_name"]]))
