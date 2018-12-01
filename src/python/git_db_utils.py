@@ -30,27 +30,43 @@ def pretty_print_result(col_names, result, color=None):
     row_values = []
     tavnit = '|'
     separator = '+'
+    change_col_idx = -1
+    change_indention = 0
 
+    # Store column name lengths
     for idx, name in enumerate(col_names):
         # Preserve length of column name
         widths.append({"name": name, "length": len(name)})
+        if name == "CHANGE":
+            change_col_idx = idx
         column_names.append(name)
 
+    # Iterate over all rows to determine column width.
+    # If the value is short, the column needs to have the length of the column name
+    # If the value is long, the column needs to have the length of the value itself
     for row in result:
         row_vals = []
         for idx, column in enumerate(row):
+            # No value in column  (privileges, etc)
             if column is not None:
                 for line in column.split("\n"):
                     widths[idx]["length"] = max(len(line), widths[idx]["length"])
-                row_vals.append(format_change(column))
+                row_vals.append(column)
             else:
                 row_vals.append(" ")
         row_values.append(row_vals)
 
     for w in widths:
+        # Record how many spaces new lines for a change need
+        if w["name"] == "CHANGE":
+            change_indention = 1 + len(separator)
         col_length = w["length"]
         tavnit += " %-" + "%ss |" % col_length
         separator += '-' * col_length + '--+'
+
+    # Replace new lines in change with indented new lines
+    for row in row_values:
+        row[change_col_idx] = format_change_and_indent(row[change_col_idx], change_indention)
 
     # Set color if set
     if color is not None:
@@ -67,6 +83,10 @@ def pretty_print_result(col_names, result, color=None):
 
 def format_change(change):
     return change.lstrip("\n").replace("\x00", ";")
+
+
+def format_change_and_indent(change, indention):
+    return format_change(change).replace("\n", "\n" + " " * indention)
 
 
 def print_error(msg, err):
