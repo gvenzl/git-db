@@ -108,7 +108,7 @@ class Database:
                                            change_user, object_name, object_type, change
                                       FROM GITDB_CHANGE_LOG
                                         WHERE commit_id IS NULL
-                                          ORDER BY CHANGE_TMS"""
+                                          ORDER BY change_tms"""
                                  )
 
     def get_added_changes(self):
@@ -118,7 +118,7 @@ class Database:
                                            change_user, object_name, object_type, change
                                       FROM GITDB_CHANGE_LOG
                                         WHERE commit_id=:1
-                                          ORDER BY object_owner, object_name""",
+                                          ORDER BY change_tms""",
                                  (self._new_commit_id,)
                                  )
 
