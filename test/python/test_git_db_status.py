@@ -72,6 +72,9 @@ class GitDbStatusTestCase(unittest.TestCase):
         git_db_deinit.run(["--all"])
         u.cleanup()
 
+        # Remove schema objects
+        test_oracle.reset_schema()
+
 
 if __name__ == '__main__':
     unittest.main()

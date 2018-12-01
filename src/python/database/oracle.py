@@ -24,17 +24,20 @@ import os
 
 import cx_Oracle as db
 
+import git_db_configuration as config
+
 
 class Database:
 
     _new_commit_id = "NEWCOMMIT"
 
-    def __init__(self, user, password, host, port, db_name, role):
+    def __init__(self, user, password, host, port, db_name, role, tracking):
         self.user = user
         self.password = password
         self.URL = host + ":" + port + "/" + db_name
         self.role = role
         self.conn = self._connect()
+        self.tracking = tracking
 
     def _connect(self):
         """ Connects to the database."""
@@ -153,6 +156,27 @@ class Database:
         return col_names, result
 
     def add_changes(self, name, user, owner, db_object):
+        """Adds changes to git.
+
+        This function is called with 'git db add' and performs the necessary DB actions such as setting the commit_id.
+
+        Parameters
+        ----------
+        name : str
+            The name of the entity to add
+        user : str
+            The change user name of the objects to add changes to git
+        owner : str
+            The object owner name of the objects to add changes to git
+        db_object : str
+            The database object name to add to git
+
+        Returns
+        -------
+        [(record,),]
+            List of changes
+
+        """
         try:
             stmt = "UPDATE GITDB_CHANGE_LOG SET commit_id=:1 WHERE commit_id IS NULL"
             if name == "." and (db_object is False and owner is False and user is False):
@@ -187,10 +211,43 @@ class Database:
 
         self.conn.outputtypehandler = output_type_handler
         cur = self.conn.cursor()
-        cur.execute("""SELECT object_owner, object_name, change
-                         FROM GITDB_CHANGE_LOG
-                           WHERE commit_id=:1
-                             ORDER BY object_owner, object_name""", (self._new_commit_id,))
+        if self.tracking == config.Tracking.SCHEMA.value:
+            stmt = """SELECT cl.object_owner, 
+                             CASE cl.object_type
+                                WHEN 'INDEX' THEN 
+                                   CASE
+                                      WHEN i.table_name IS NULL THEN
+                                         cl.object_name
+                                      ELSE i.table_name     
+                                   END  
+                                ELSE
+                                   cl.object_name
+                             END AS object_name,
+                             cl.change
+                               FROM GITDB_CHANGE_LOG cl
+                                 LEFT OUTER JOIN USER_INDEXES i
+                                   ON cl.object_name = i.index_name
+                                 WHERE cl.commit_id=:1
+                                   ORDER BY cl.change_tms"""
+        else:
+            stmt = """SELECT cl.object_owner, 
+                             CASE cl.object_type
+                                WHEN 'INDEX' THEN 
+                                   CASE
+                                      WHEN i.table_name IS NULL THEN
+                                         cl.object_name
+                                      ELSE i.table_name     
+                                   END  
+                                ELSE
+                                   cl.object_name
+                             END AS object_name,
+                             cl.change
+                               FROM GITDB_CHANGE_LOG cl
+                                 LEFT OUTER JOIN ALL_INDEXES i
+                                   ON cl.object_name = i.index_name AND cl.object_owner = i.owner
+                                 WHERE cl.commit_id=:1
+                                   ORDER BY cl.change_tms"""
+        cur.execute(stmt, (self._new_commit_id,))
         result = cur.fetchall()
         cur.close()
         return result

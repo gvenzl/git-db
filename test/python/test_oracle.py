@@ -44,10 +44,18 @@ def create_schema_objects():
     cur.execute("GRANT INSERT ON " + TABLE_NAME + " TO PUBLIC")
     cur.execute("REVOKE INSERT ON " + TABLE_NAME + " FROM PUBLIC")
     cur.execute("TRUNCATE TABLE " + TABLE_NAME)
-    cur.execute("DROP TABLE " + TABLE_NAME)
     cur.close()
     con.close()
 
 
 def reset_schema():
-    pass
+    con = _connect_schema()
+    cur = con.cursor()
+    try:
+        cur.execute("DROP TABLE " + TABLE_NAME)
+    except cx_Oracle.DatabaseError as e:
+        # Ignore ORA-00942: table or view does not exist
+        if e.args[0].code != 942:
+            raise e
+    cur.close()
+    con.close()

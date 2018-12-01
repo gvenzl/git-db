@@ -26,11 +26,12 @@ def get_database(config):
     """Return database object based on type."""
     dbtype = c.Database(config[c.DBTYPE])
     credentials = config[c.CREDENTIALS]
+    tracking = config[c.TRACKING]
     if dbtype == c.Database.ORACLE:
         try:
             import database.oracle
             return oracle.Database(credentials["user"], credentials["password"], credentials["host"],
-                                   credentials["port"], credentials["dbname"], credentials["role"])
+                                   credentials["port"], credentials["dbname"], credentials["role"], tracking)
         except ModuleNotFoundError as err:
             raise ConnectionError("Database driver module is not installed: {0}".format(str(err)))
     else:

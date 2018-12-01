@@ -53,11 +53,11 @@ def run(cmd):
     # Instantiate DB object
     try:
         database = db.get_database(
-                                   config.build_config(
-                                                       config.Database.ORACLE,
+                                   config.build_config(config.Database.ORACLE,
                                                        args.user, args.password,
                                                        args.host, args.port, args.dbname,
-                                                       args.role))
+                                                       args.role,
+                                                       args.all))
     except ConnectionError as err:
         utils.print_error("git-db error while connecting to the database:", err)
         return 1
