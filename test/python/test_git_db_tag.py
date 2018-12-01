@@ -40,6 +40,7 @@ class GitDbTagTestCase(unittest.TestCase):
         print()
         print("TEST: Tag commit change")
         print()
+
         self.assertEqual(0, git_db_init.run(["--user", u.creds["test_user"], "--password", u.creds["test_pwd"],
                                              "--host", u.creds["db_host"], "--port", u.creds["db_port"], "--dbname",
                                              u.creds["db_name"]]))
@@ -57,6 +58,7 @@ class GitDbTagTestCase(unittest.TestCase):
         print()
         print("TEST: Tag commit message")
         print()
+
         self.assertEqual(0, git_db_init.run(["--user", u.creds["test_user"], "--password", u.creds["test_pwd"],
                                              "--host", u.creds["db_host"], "--port", u.creds["db_port"], "--dbname",
                                              u.creds["db_name"]]))
@@ -65,6 +67,21 @@ class GitDbTagTestCase(unittest.TestCase):
         self.assertEqual(0, git_db_commit.run(["-m", "unit test message"]))
         git_commit_id = git_db_utils.get_git_commit_id()
         self.assertEqual(0, git_db_tag.run([tag_message, git_commit_id]))
+
+    def test_tag_invalid_commit(self):
+
+        print()
+        print("TEST: Tag on invalid commit")
+        print("Should raise warning")
+        print()
+
+        self.assertEqual(0, git_db_init.run(["--user", u.creds["test_user"], "--password", u.creds["test_pwd"],
+                                             "--host", u.creds["db_host"], "--port", u.creds["db_port"], "--dbname",
+                                             u.creds["db_name"]]))
+        test_oracle.create_schema_objects()
+        self.assertEqual(0, git_db_add.run(["."]))
+        self.assertEqual(0, git_db_commit.run(["-m", "unit test message"]))
+        self.assertEqual(0, git_db_tag.run(["test tag", "invalid commit"]))
 
     def tearDown(self):
         git_db_deinit.run(["--all"])

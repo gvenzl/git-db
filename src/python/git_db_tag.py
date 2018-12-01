@@ -40,7 +40,8 @@ def run(cmd):
 def _add_tag(tag, commit):
     try:
         db = database.get_database(config.get_config())
-        db.set_tag(tag, commit)
+        if db.set_tag(tag, commit) == 1:
+            utils.print_warning("No commits found with that ID, ignored.")
         return 0
     except (ConnectionError, FileNotFoundError) as err:
         utils.print_error("git-db error while connecting to the database:", err)

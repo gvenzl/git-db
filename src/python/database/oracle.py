@@ -37,7 +37,7 @@ class Database:
         self.conn = self._connect()
 
     def _connect(self):
-        """ Connects to the database"""
+        """ Connects to the database."""
         try:
             return db.connect(self.user,
                               self.password,
@@ -206,18 +206,29 @@ class Database:
             raise RuntimeError("Cannot set commit id for committed changes!", err)
 
     def set_tag(self, tag, commit_id):
+        """Sets a tag for a given commit.
+        If the COMMIT_ID doesn't exists, the function returns 1, otherwise 0"""
+
         try:
             cur = self.conn.cursor()
             # Check whether commit id is full one or abbreviated
             if len(commit_id) == 40:
-                stmt = """UPDATE GITDB_CHANGE_LOG
-                             SET tag=:1 WHERE commit_id=:2"""
+                commit_id_where_clause = " commit_id LIKE CONCAT(:1,'%') "
             else:
-                stmt = """UPDATE GITDB_CHANGE_LOG
-                             SET tag=:1 WHERE commit_id LIKE CONCAT(:2,'%')"""
-            cur.execute(stmt, (tag, commit_id))
+                commit_id_where_clause = " commit_id=:1"
+
+            # Check whether commit_id exists
+            cur.execute("SELECT COUNT(1) FROM GITDB_CHANGE_LOG WHERE " + commit_id_where_clause, (commit_id,))
+            result = cur.fetchall()
+            if result[0][0] == 0:
+                # No COMMIT ID found, exit gracefully
+                cur.close()
+                return 1
+
+            cur.execute("""UPDATE GITDB_CHANGE_LOG SET tag=:2 WHERE """ + commit_id_where_clause, (commit_id, tag))
             cur.close()
             self.conn.commit()
+            return 0
         except db.DatabaseError as err:
             raise RuntimeError("Cannot set tag for commit id!", err)
 
