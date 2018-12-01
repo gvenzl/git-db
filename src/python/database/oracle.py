@@ -104,7 +104,7 @@ class Database:
         return self._get_changes("""SELECT TO_CHAR(change_tms,'YYYY-MM-DD HH24:MI:SS') AS change_tms,
                                            change_user, object_name, object_type, change
                                       FROM GITDB_CHANGE_LOG
-                                        WHERE COMMIT_ID IS NULL
+                                        WHERE commit_id IS NULL
                                           ORDER BY CHANGE_TMS"""
                                  )
 
