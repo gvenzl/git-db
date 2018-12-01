@@ -70,9 +70,11 @@ def format_change(change):
 
 
 def print_error(msg, err):
+    print(Color.RED.value, end='')
     print(msg)
     for err_msg in err.args:
         print(err_msg)
+    print(Color.RESET.value, end='')
 
 
 def get_git_commit_id():
