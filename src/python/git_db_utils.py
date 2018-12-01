@@ -77,6 +77,12 @@ def print_error(msg, err):
     print(Color.RESET.value, end='')
 
 
+def print_warning(msg):
+    print(Color.YELLOW.value, end='')
+    print(msg)
+    print(Color.RESET.value, end='')
+
+
 def get_git_commit_id():
     """Return git commit log"""
     p = subprocess.run(["git", "log"], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
@@ -89,5 +95,6 @@ def get_git_commit_id():
 class Color(Enum):
     GREEN = "\x1b[32m"
     RED = "\x1b[31m"
+    YELLOW = "\x1b[33m"
     RESET = "\x1b[0m"
 
