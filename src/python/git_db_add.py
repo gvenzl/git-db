@@ -57,7 +57,7 @@ def run(cmd):
         changes = database.add_changes(args.change.upper(), args.user, args.owner, args.object)
         _write_changes_to_files(changes)
     except ConnectionError as err:
-        utils.print_error("git-db error while initializing git repo:", err)
+        utils.print_error("git-db error while adding changes:", err)
         return 1
 
     return 0
