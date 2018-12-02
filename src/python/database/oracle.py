@@ -289,6 +289,46 @@ class Database:
         except db.DatabaseError as err:
             raise RuntimeError("Cannot set tag for commit id!", err)
 
+    def reset_changes(self, name, user, owner, db_object):
+        """Adds changes to git.
+
+        This function is called with 'git db add' and performs the necessary DB actions such as setting the commit_id.
+
+        Parameters
+        ----------
+        name : str
+            The name of the entity to add
+        user : str
+            The change user name of the objects to add changes to git
+        owner : str
+            The object owner name of the objects to add changes to git
+        db_object : str
+            The database object name to add to git
+
+        """
+        try:
+            stmt = "UPDATE GITDB_CHANGE_LOG SET commit_id = '' WHERE commit_id=:1 "
+            if name == "." and (db_object is False and owner is False and user is False):
+                pass
+            elif user is True:
+                stmt += " AND change_user=:2"
+            elif owner is True:
+                stmt += " AND object_owner=:2"
+            elif db_object is True:
+                stmt += " AND object_name=:2"
+            else:
+                raise ValueError("Invalid values for reset: name: '{}', db_object: '{}', owner: '{}', user: '{}'"
+                                 .format(name, db_object, owner, user))
+            params = (self._new_commit_id,)
+            if name is not None and name != '.':
+                params += (name,)
+            cur = self.conn.cursor()
+            cur.execute(stmt, params)
+            cur.close()
+            self.conn.commit()
+        except db.DatabaseError as err:
+            raise RuntimeError("Cannot reset changes!", err)
+
 
 def _get_setup_table():
     return _get_file_content("setup_table.sql")

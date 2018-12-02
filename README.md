@@ -9,24 +9,24 @@ Following databases are currently supported: `Oracle`
 ## Usage
 
     git db [--version] [--help] <command> [<args>]
-
+    
     These are common Git DB commands used in various situations:
-
+    
     start a working area
        init       Create an empty Git DB repository or reinitialize an existing one
-
+    
     work on the current change
        add        Add a DDL change to the index
-
+       reset      Reset added changes back to uncommitted ones in the change tracker
+    
     examine the history and state
        log        Show commit logs
        show       Show various types of objects
        status     Show the working tree status
-
+    
     grow, mark and tweak your common history
        commit     Record changes to the repository
-       tag        Tag a commit  
-       
+       tag        Tag a commit
     destroy a working area
        deinit     Destroy the Git DB repository
 
@@ -190,6 +190,119 @@ A sample output adding all changes:
     +++ b/PEOPLE_IDX01.sql
     @@ -0,0 +1 @@
     +CREATE INDEX PEOPLE_IDX01 ON PEOPLE (first_name);
+
+### git db reset
+`git db reset` lets you reset added changes in the change tracking.
+This command will only reset the changes marked for addition in the change tracking itself.
+It does not reset commit ids nor does it touch the files on the filesystem.  
+The user will have to use `git` itself to get the filesystem back into the state desired.  
+For example:
+
+`git db status` shows two new tables and one new index, no changes committed yet:
+
+    gvenzl-mac:schema1 gvenzl$ git db status
+    Uncommitted database changes:
+    
+    +---------------------+-------------+--------------+-------------+-------------------------------------------------------------------------------------------+
+    | CHANGE_TMS          | CHANGE_USER | OBJECT_NAME  | OBJECT_TYPE | CHANGE                                                                                    |
+    +---------------------+-------------+--------------+-------------+-------------------------------------------------------------------------------------------+
+    | 2018-12-02 17:06:29 | TEST        | ADDRESSES    | TABLE       | create table addresses (id number, street_name varchar2(10), street_number varchar2(10)); |
+    | 2018-12-02 17:06:49 | TEST        | ADDRESSES_PK | INDEX       | create unique index addresses_pk on addresses (id);                                       |
+    | 2018-12-02 17:07:10 | TEST        | ADDRESSES    | TABLE       | alter table addresses add primary key (id);                                               |
+    | 2018-12-02 17:50:36 | TEST        | CITIES       | TABLE       | create table cities (id number, name varchar2(10));                                       |
+    +---------------------+-------------+--------------+-------------+-------------------------------------------------------------------------------------------+
+    
+    On branch master
+    nothing to commit, working tree clean
+
+The user now decides to add all changes to the tracking via `git db add .`:
+
+    gvenzl-mac:schema1 gvenzl$ git db add .
+    gvenzl-mac:schema1 gvenzl$ git db status
+    Changes to be committed:
+    
+    +---------------------+-------------+--------------+-------------+-------------------------------------------------------------------------------------------+
+    | CHANGE_TMS          | CHANGE_USER | OBJECT_NAME  | OBJECT_TYPE | CHANGE                                                                                    |
+    +---------------------+-------------+--------------+-------------+-------------------------------------------------------------------------------------------+
+    | 2018-12-02 17:06:29 | TEST        | ADDRESSES    | TABLE       | create table addresses (id number, street_name varchar2(10), street_number varchar2(10)); |
+    | 2018-12-02 17:06:49 | TEST        | ADDRESSES_PK | INDEX       | create unique index addresses_pk on addresses (id);                                       |
+    | 2018-12-02 17:07:10 | TEST        | ADDRESSES    | TABLE       | alter table addresses add primary key (id);                                               |
+    | 2018-12-02 17:50:36 | TEST        | CITIES       | TABLE       | create table cities (id number, name varchar2(10));                                       |
+    +---------------------+-------------+--------------+-------------+-------------------------------------------------------------------------------------------+
+    
+    On branch master
+    Changes to be committed:
+      (use "git reset HEAD <file>..." to unstage)
+    
+    	new file:   ADDRESSES.sql
+    	new file:   CITIES.sql
+    
+All changes have been added to the change tracking and new `.sql` files been generated, as expected.  
+Then the user realized that he didn't want to add the table `CITIES` just yet, so he resets it via `git db reset --object cities`:
+
+    gvenzl-mac:schema1 gvenzl$ git db reset --object cities
+    gvenzl-mac:schema1 gvenzl$ git db status
+    Changes to be committed:
+    
+    +---------------------+-------------+--------------+-------------+-------------------------------------------------------------------------------------------+
+    | CHANGE_TMS          | CHANGE_USER | OBJECT_NAME  | OBJECT_TYPE | CHANGE                                                                                    |
+    +---------------------+-------------+--------------+-------------+-------------------------------------------------------------------------------------------+
+    | 2018-12-02 17:06:29 | TEST        | ADDRESSES    | TABLE       | create table addresses (id number, street_name varchar2(10), street_number varchar2(10)); |
+    | 2018-12-02 17:06:49 | TEST        | ADDRESSES_PK | INDEX       | create unique index addresses_pk on addresses (id);                                       |
+    | 2018-12-02 17:07:10 | TEST        | ADDRESSES    | TABLE       | alter table addresses add primary key (id);                                               |
+    +---------------------+-------------+--------------+-------------+-------------------------------------------------------------------------------------------+
+    
+    Uncommitted database changes:
+    
+    +---------------------+-------------+-------------+-------------+-----------------------------------------------------+
+    | CHANGE_TMS          | CHANGE_USER | OBJECT_NAME | OBJECT_TYPE | CHANGE                                              |
+    +---------------------+-------------+-------------+-------------+-----------------------------------------------------+
+    | 2018-12-02 17:50:36 | TEST        | CITIES      | TABLE       | create table cities (id number, name varchar2(10)); |
+    +---------------------+-------------+-------------+-------------+-----------------------------------------------------+
+    
+    On branch master
+    Changes to be committed:
+      (use "git reset HEAD <file>..." to unstage)
+    
+    	new file:   ADDRESSES.sql
+    	new file:   CITIES.sql
+    
+The table `CITIES` has been reverted to `uncommitted database changes` again.  
+However, note that the file itself `CITIES.sql` has been left untouched, intentionally.
+The user has to execute the desired `git` command to deal with the file:
+
+    gvenzl-mac:schema1 gvenzl$ git reset HEAD CITIES.sql
+    gvenzl-mac:schema1 gvenzl$ git db status
+    Changes to be committed:
+    
+    +---------------------+-------------+--------------+-------------+-------------------------------------------------------------------------------------------+
+    | CHANGE_TMS          | CHANGE_USER | OBJECT_NAME  | OBJECT_TYPE | CHANGE                                                                                    |
+    +---------------------+-------------+--------------+-------------+-------------------------------------------------------------------------------------------+
+    | 2018-12-02 17:06:29 | TEST        | ADDRESSES    | TABLE       | create table addresses (id number, street_name varchar2(10), street_number varchar2(10)); |
+    | 2018-12-02 17:06:49 | TEST        | ADDRESSES_PK | INDEX       | create unique index addresses_pk on addresses (id);                                       |
+    | 2018-12-02 17:07:10 | TEST        | ADDRESSES    | TABLE       | alter table addresses add primary key (id);                                               |
+    +---------------------+-------------+--------------+-------------+-------------------------------------------------------------------------------------------+
+    
+    Uncommitted database changes:
+    
+    +---------------------+-------------+-------------+-------------+-----------------------------------------------------+
+    | CHANGE_TMS          | CHANGE_USER | OBJECT_NAME | OBJECT_TYPE | CHANGE                                              |
+    +---------------------+-------------+-------------+-------------+-----------------------------------------------------+
+    | 2018-12-02 17:50:36 | TEST        | CITIES      | TABLE       | create table cities (id number, name varchar2(10)); |
+    +---------------------+-------------+-------------+-------------+-----------------------------------------------------+
+    
+    On branch master
+    Changes to be committed:
+      (use "git reset HEAD <file>..." to unstage)
+    
+    	new file:   ADDRESSES.sql
+    
+    Untracked files:
+      (use "git add <file>..." to include in what will be committed)
+    
+    	CITIES.sql
+    
+    gvenzl-mac:schema1 gvenzl$
 
 ### git db tag
 `git db tag` tags a given commit:

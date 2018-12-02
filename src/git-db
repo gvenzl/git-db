@@ -33,8 +33,7 @@ function usage() {
     echo "";
     echo "work on the current change";
     echo "   add        Add a DDL change to the index";
-    echo "   reset      Reset current HEAD to the specified state";
-    echo "   squash     Squash changes on a given object into a single file";
+    echo "   reset      Reset added changes back to uncommitted ones in the change tracker";
     echo "";
     echo "examine the history and state";
     echo "   log        Show commit logs";
