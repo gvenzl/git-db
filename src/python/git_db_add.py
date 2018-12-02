@@ -87,7 +87,7 @@ def _write_changes_to_files(added_changes):
                 os.system("git add " + shlex.quote(file.name))
             file = open(file_name, "a")
             prev_name = name
-        file.write(utils.format_change(change) + "\n")
+        file.write(utils.format_change(change) + "\n\n")
     # In cases no changes happened
     if file is not None:
         file.close()
