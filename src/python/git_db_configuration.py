@@ -23,9 +23,12 @@
 import base64
 import json
 import os
+import platform
+import stat
 from enum import Enum
 
 CONFIG_DIR = "./.git/git-db"
+MAIN_CONFIG_FILE = "git-db.conf"
 CREDENTIALS = "credentials"
 TRACKING = "tracking"
 DBTYPE = "dbtype"
@@ -49,8 +52,13 @@ def store_config(config):
     config[CREDENTIALS]["password"] = base64.b64encode(password.encode("utf-8")).decode("utf-8")
     if not os.path.exists(CONFIG_DIR):
         os.mkdir(CONFIG_DIR)
-    with open(CONFIG_DIR + "/git-db.conf", "w") as f:
+        if platform.system() != "Windows":
+            os.chmod(CONFIG_DIR, stat.S_IRUSR | stat.S_IWUSR | stat.S_IXUSR | stat.S_IRGRP | stat.S_IWGRP)
+    with open(CONFIG_DIR + "/" + MAIN_CONFIG_FILE, "w") as f:
         f.write(json.dumps(config, indent=2))
+        if platform.system() != "Windows":
+            os.chmod(CONFIG_DIR + "/" + MAIN_CONFIG_FILE, stat.S_IRUSR | stat.S_IWUSR | stat.S_IRGRP | stat.S_IWGRP)
+
 
 
 def get_tracking():
