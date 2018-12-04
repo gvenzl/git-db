@@ -148,8 +148,7 @@ case "$1" in
         if [[ ":$PATH:" == *":$INSTALL_PREFIX:"* ]]; then
             echo "Get started with 'git db help'"
         else
-            echo "Get started with 'export PATH=\$PATH:${INSTALL_PREFIX}'"
-            echo "and 'git db help'"
+            echo "Get started with 'export PATH=\$PATH:${INSTALL_PREFIX}' and 'git db help'"
         fi;
 
         exit
