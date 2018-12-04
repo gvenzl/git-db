@@ -20,31 +20,31 @@
 --
 
 CREATE OR REPLACE TRIGGER GITDB_CHANGE_TRACKER
-    BEFORE DDL ON ###TARGET###
-    DECLARE
-       v_sql_text  ora_name_list_t;
-       v_nPos      PLS_INTEGER;
-       v_stmt_part CLOB;
-       v_stmt      CLOB;
-    BEGIN
-        v_nPos := ora_sql_txt(v_sql_text);
+BEFORE DDL ON ###TARGET###
+DECLARE
+   v_sql_text  ora_name_list_t;
+   v_nPos      PLS_INTEGER;
+   v_stmt_part CLOB;
+   v_stmt      CLOB;
+BEGIN
+    v_nPos := ora_sql_txt(v_sql_text);
 
-        FOR i IN 1..v_nPos LOOP
-            v_stmt_part := TRIM(v_sql_text(i));
-            v_stmt := v_stmt || v_stmt_part;
-        END LOOP;
+    FOR i IN 1..v_nPos LOOP
+        v_stmt_part := TRIM(v_sql_text(i));
+        v_stmt := v_stmt || v_stmt_part;
+    END LOOP;
 
-        INSERT INTO GITDB_CHANGE_LOG
-                      (CHANGE_TMS,
-                       CHANGE_USER,
-                       CHANGE,
-                       OBJECT_NAME,
-                       OBJECT_TYPE,
-                       OBJECT_OWNER)
-               VALUES (SYSDATE,
-                       USER,
-                       v_stmt,
-                       ora_dict_obj_name,
-                       ora_dict_obj_type,
-                       ora_dict_obj_owner);
-    END;
+    INSERT INTO GITDB_CHANGE_LOG
+                  (CHANGE_TMS,
+                   CHANGE_USER,
+                   CHANGE,
+                   OBJECT_NAME,
+                   OBJECT_TYPE,
+                   OBJECT_OWNER)
+            VALUES (SYSDATE,
+                   USER,
+                   v_stmt,
+                   ora_dict_obj_name,
+                   ora_dict_obj_type,
+                   ora_dict_obj_owner);
+END;
