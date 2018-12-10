@@ -41,6 +41,13 @@ def create_schema_objects():
     cur.execute("ANALYZE TABLE " + TABLE_NAME + " COMPUTE STATISTICS")
     cur.execute("RENAME " + TABLE_NAME + " TO MY_UNIT_TEST")
     cur.execute("RENAME MY_UNIT_TEST TO " + TABLE_NAME)
+    cur.execute("""
+CREATE OR REPLACE FUNCTION ADD_NUMS (p_n NUMBER, p_m NUMBER)
+RETURN NUMBER
+AS
+BEGIN
+   RETURN p_n + p_m;
+END;""")
     cur.execute("GRANT INSERT ON " + TABLE_NAME + " TO PUBLIC")
     cur.execute("REVOKE INSERT ON " + TABLE_NAME + " FROM PUBLIC")
     cur.execute("TRUNCATE TABLE " + TABLE_NAME)

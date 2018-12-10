@@ -32,6 +32,7 @@ def pretty_print_result(col_names, result, color=None):
     separator = '+'
     change_col_idx = -1
     change_indention = 0
+    change_length = 0
 
     # Store column name lengths
     for idx, name in enumerate(col_names):
@@ -60,13 +61,14 @@ def pretty_print_result(col_names, result, color=None):
         # Record how many spaces new lines for a change need
         if w["name"] == "CHANGE":
             change_indention = len(separator)
+            change_length = w["length"]
         col_length = w["length"]
         tavnit += " %-" + "%ss |" % col_length
         separator += '-' * col_length + '--+'
 
     # Replace new lines in change with indented new lines
     for row in row_values:
-        row[change_col_idx] = format_change_and_indent(row[change_col_idx], "|", change_indention)
+        row[change_col_idx] = format_change_and_indent(row[change_col_idx], "|", change_indention, change_length)
 
     # Set color if set
     if color is not None:
@@ -82,11 +84,21 @@ def pretty_print_result(col_names, result, color=None):
 
 
 def format_change(change):
-    return change.lstrip("\n").replace("\x00", ";")
+    return change.lstrip("\n").replace("\x00", ";").replace(";;", ";")
 
 
-def format_change_and_indent(change, border_marker, indention):
-    return format_change(change).replace("\n", "\n" + border_marker + (" " * indention))
+def format_change_and_indent(change, border_marker, indention, length):
+    change = format_change(change)
+    if change.find("\n") != -1:
+        lines = change.splitlines()
+        for idx, line in enumerate(lines):
+            lines[idx] = border_marker + (" " * indention) + line + (" " * (length-len(line)+1) + border_marker)
+        change = "\n".join(lines)
+        # Remove leading spaces of first line
+        change = change.lstrip(border_marker).lstrip()
+        # Remove trailing border marker and space of last line
+        change = change[:-2]
+    return change
 
 
 def print_error(msg, err):
