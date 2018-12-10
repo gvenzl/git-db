@@ -28,8 +28,11 @@ def pretty_print_result(col_names, result, color=None):
     widths = []
     column_names = []
     row_values = []
-    tavnit = '|'
-    separator = '+'
+    line_separator_char = "-"
+    col_separator_char = "|"
+    col_header_separator = "+"
+    row_entry = col_separator_char
+    header_row_separator = col_header_separator
     change_col_idx = -1
     change_indention = 0
     change_length = 0
@@ -60,25 +63,26 @@ def pretty_print_result(col_names, result, color=None):
     for w in widths:
         # Record how many spaces new lines for a change need
         if w["name"] == "CHANGE":
-            change_indention = len(separator)
+            change_indention = len(header_row_separator)
             change_length = w["length"]
         col_length = w["length"]
-        tavnit += " %-" + "%ss |" % col_length
-        separator += '-' * col_length + '--+'
+        row_entry += " %" + line_separator_char + (("%ss " + col_separator_char) % col_length)
+        header_row_separator += line_separator_char * col_length + line_separator_char + line_separator_char + col_header_separator
 
     # Replace new lines in change with indented new lines
     for row in row_values:
-        row[change_col_idx] = format_change_and_indent(row[change_col_idx], "|", change_indention, change_length)
+        row[change_col_idx] = format_change_and_indent(row[change_col_idx], col_separator_char,
+                                                       change_indention, change_length)
 
     # Set color if set
     if color is not None:
         print(color.value, end='')
-    print(separator)
-    print(tavnit % tuple(column_names))
-    print(separator)
+    print(header_row_separator)
+    print(row_entry % tuple(column_names))
+    print(header_row_separator)
     for row in row_values:
-        print(tavnit % tuple(row))
-    print(separator)
+        print(row_entry % tuple(row))
+    print(header_row_separator)
     if color is not None:
         print(Color.RESET.value, end='')
 
