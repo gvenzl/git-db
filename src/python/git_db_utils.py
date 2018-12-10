@@ -59,14 +59,14 @@ def pretty_print_result(col_names, result, color=None):
     for w in widths:
         # Record how many spaces new lines for a change need
         if w["name"] == "CHANGE":
-            change_indention = 1 + len(separator)
+            change_indention = len(separator)
         col_length = w["length"]
         tavnit += " %-" + "%ss |" % col_length
         separator += '-' * col_length + '--+'
 
     # Replace new lines in change with indented new lines
     for row in row_values:
-        row[change_col_idx] = format_change_and_indent(row[change_col_idx], change_indention)
+        row[change_col_idx] = format_change_and_indent(row[change_col_idx], "|", change_indention)
 
     # Set color if set
     if color is not None:
@@ -85,8 +85,8 @@ def format_change(change):
     return change.lstrip("\n").replace("\x00", ";")
 
 
-def format_change_and_indent(change, indention):
-    return format_change(change).replace("\n", "\n" + " " * indention)
+def format_change_and_indent(change, border_marker, indention):
+    return format_change(change).replace("\n", "\n" + border_marker + (" " * indention))
 
 
 def print_error(msg, err):
